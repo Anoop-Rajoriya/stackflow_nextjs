@@ -39,5 +39,4 @@ export default async function createAnswerTable() {
       required: true,
     }),
   ]);
-  // Create Indexes
 }

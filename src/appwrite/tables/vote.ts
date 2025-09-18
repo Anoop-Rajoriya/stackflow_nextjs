@@ -46,5 +46,4 @@ export default async function createVoteTable() {
       required: true,
     }),
   ]);
-  // Create Indexes
 }

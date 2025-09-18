@@ -47,7 +47,7 @@ export default async function createQuestionTable() {
       size: 50,
       required: true,
       xdefault: undefined,
-      array: true,
+      array: true
     }),
     tabledb.createStringColumn({
       databaseId: DB_NAME,
@@ -59,22 +59,19 @@ export default async function createQuestionTable() {
   ]);
 
   // Create Indexes
-  await Promise.all([
-    tabledb.createIndex({
-      databaseId: DB_NAME,
-      tableId: QUESTION,
-      key: "title",
-      type: IndexType.Fulltext,
-      columns: ["title"],
-      orders: ["asc"],
-    }),
-    tabledb.createIndex({
-      databaseId: DB_NAME,
-      tableId: QUESTION,
-      key: "tags",
-      type: IndexType.Fulltext,
-      columns: ["tags"],
-      orders: ["asc"],
-    }),
-  ]);
+  // await tabledb.createIndex({
+  //   databaseId: DB_NAME,
+  //   tableId: QUESTION,
+  //   key: "title_index",
+  //   type: IndexType.Fulltext,
+  //   columns: ["title"],
+  // });
+
+  // await tabledb.createIndex({
+  //   databaseId: DB_NAME,
+  //   tableId: QUESTION,
+  //   key: "tags_index",
+  //   type: IndexType.Fulltext,
+  //   columns: ["tags"],
+  // });
 }

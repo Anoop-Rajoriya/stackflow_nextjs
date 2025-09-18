@@ -46,5 +46,4 @@ export default async function createCommentTable() {
       required: true,
     }),
   ]);
-  // Create Indexes
 }

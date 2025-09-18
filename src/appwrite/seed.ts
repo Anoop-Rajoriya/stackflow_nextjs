@@ -10,13 +10,15 @@ export default async function seedOrGetDB() {
     await tabledb.get({ databaseId: DB_NAME });
   } catch (error) {
     try {
+      console.log("Creating and seeding TableDB...");
       await tabledb.create({ databaseId: DB_NAME, name: DB_NAME });
       await Promise.all([
-        createQuestionTable,
-        createAnswerTable,
-        createCommentTable,
-        createVoteTable,
+        createQuestionTable(),
+        createAnswerTable(),
+        createCommentTable(),
+        createVoteTable(),
       ]);
+      console.log("TableDB created!");
     } catch (error) {
       console.error("File:- seed error: ", error);
     }
