@@ -1,0 +1,6 @@
+export const DB_NAME = "Stackflow_nextjs"
+export const QUESTION = "questions"
+export const ANSWER = "answers"
+export const COMMENT = "comments"
+export const VOTE = "votes"
+export const ATTACHMENT = "question-attachment"
