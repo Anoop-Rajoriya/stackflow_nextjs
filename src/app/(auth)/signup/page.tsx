@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { GalleryVerticalEnd } from "lucide-react";
 
 const FormSchema = z.object({
   name: z.string().min(4).max(20),
@@ -47,7 +48,11 @@ function Signup() {
     const signupResponse = await signup(name, email, password);
 
     if (!signupResponse.success) {
-      setIsError(signupResponse.error!.message);
+      if (signupResponse.error) {
+        setIsError(signupResponse.error.message);
+      } else {
+        setIsError("Something want wrong");
+      }
       setIsLoading(false);
       return;
     }
@@ -55,9 +60,11 @@ function Signup() {
     const loginResponse = await login(email, password);
 
     if (!loginResponse.success) {
-      setIsError(loginResponse.error!.message);
-      setIsLoading(false);
-      return;
+      if (loginResponse.error) {
+        setIsError(loginResponse.error.message);
+      } else {
+        setIsError("Something want wrong");
+      }
     }
 
     setIsLoading(false);
@@ -66,17 +73,27 @@ function Signup() {
   return (
     <div className="flex flex-col gap-6">
       {/* Title */}
-      <h1 className="text-xl font-bold">Welcome to Stackflow</h1>
-      <p className="text-center text-sm">
-        Have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
-          Login
+      <div className="flex flex-col items-center gap-2">
+        <a href="#" className="flex flex-col items-center gap-2 font-medium">
+          <div className="flex size-8 items-center justify-center rounded-md">
+            <GalleryVerticalEnd className="size-6" />
+          </div>
+          <span className="sr-only">Stackflow</span>
         </a>
-      </p>
-      {/* Error */}
-      {isError && <p className="">{isError}</p>}
+        <h1 className="text-xl font-bold">Welcome to Stackflow</h1>
+        <p className="text-center text-sm">
+          Have an account?{" "}
+          <a href="#" className="underline underline-offset-4">
+            Login
+          </a>
+        </p>
+      </div>
       {/* Form */}
       <Form {...form}>
+        {/* Error */}
+        {isError && (
+          <p className="text-center text-sm text-red-400">{isError}</p>
+        )}
         <form
           className="flex flex-col gap-6"
           onSubmit={form.handleSubmit(onSubmit)}

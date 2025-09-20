@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { GalleryVerticalEnd } from "lucide-react";
 
 const FormSchema = z.object({
   email: z.email(),
@@ -45,9 +46,11 @@ function Login() {
     const loginResponse = await login(email, password);
 
     if (!loginResponse.success) {
-      setIsError(loginResponse.error!.message);
-      setIsLoading(false);
-      return;
+      if (loginResponse.error) {
+        setIsError(loginResponse.error.message);
+      } else {
+        setIsError("Something want wrong");
+      }
     }
 
     setIsLoading(false);
@@ -56,17 +59,25 @@ function Login() {
   return (
     <div className="flex flex-col gap-6">
       {/* Title */}
-      <h1 className="text-xl font-bold">Welcome to Stackflow</h1>
-      <p className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
-          Sign up
+      <div className="flex flex-col items-center gap-2">
+        <a href="#" className="flex flex-col items-center gap-2 font-medium">
+          <div className="flex size-8 items-center justify-center rounded-md">
+            <GalleryVerticalEnd className="size-6" />
+          </div>
+          <span className="sr-only">Stackflow</span>
         </a>
-      </p>
-      {/* Error */}
-      {isError && <p className="">{isError}</p>}
+        <h1 className="text-xl font-bold">Welcome to Stackflow</h1>
+        <p className="text-center text-sm">
+          Don&apos;t have an account?{" "}
+          <a href="#" className="underline underline-offset-4">
+            Sign up
+          </a>
+        </p>
+      </div>
       {/* Form */}
       <Form {...form}>
+        {/* Error */}
+        {isError && <p className="text-center text-sm text-red-400">{isError}</p>}
         <form
           className="flex flex-col gap-6"
           onSubmit={form.handleSubmit(onSubmit)}
