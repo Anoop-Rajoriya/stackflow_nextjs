@@ -2,11 +2,15 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 
-import { AppwriteException, ID, Models } from "node-appwrite";
+import { AppwriteException, ID, Models } from "appwrite";
 import { account } from "@/appwrite/client.config";
 
+export type UserPref = {
+  reputation: Number;
+};
+
 interface AuthStore {
-  user: Models.User<Models.Preferences> | null;
+  user: Models.User<UserPref> | null;
   session: Models.Session | null;
   jwt: Models.Jwt | null;
   hydrated: boolean;
@@ -24,7 +28,10 @@ interface AuthStore {
     password: string
   ) => Promise<{ success: boolean; error?: AppwriteException | null }>;
 
-  logout: () => Promise<{ success: boolean; error?: AppwriteException | null }>;
+  logout: () => Promise<{
+    success: boolean;
+    error?: AppwriteException | null;
+  }>;
 
   verifySession: () => Promise<void>;
 }
@@ -60,12 +67,12 @@ export const useAuth = create<AuthStore>()(
             password,
           });
           const [user, jwt] = await Promise.all([
-            account.get(),
+            account.get<UserPref>(),
             account.createJWT(),
           ]);
 
           if (!user.prefs?.reputation)
-            await account.updatePrefs({
+            await account.updatePrefs<UserPref>({
               prefs: {
                 reputation: 0,
               },
@@ -75,6 +82,8 @@ export const useAuth = create<AuthStore>()(
           return { success: true };
         } catch (error) {
           console.log("File/Method:- Auth/login error: ", error);
+
+          console.log(error instanceof AppwriteException, error);
           return {
             success: false,
             error: error instanceof AppwriteException ? error : null,
