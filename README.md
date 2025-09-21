@@ -1,1 +1,1 @@
-# StackFlow A Full Stack Qna System
+# StackFlow A Full Stack Stack Overflow Clone
