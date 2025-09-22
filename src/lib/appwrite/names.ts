@@ -1,4 +1,5 @@
-export default {
-  T_DB: "stackflow-db",
-  PROFILE_TABLE: "users-profile",
-};
+const DB = "taskflow-database-id";
+const USR_PROFILE = "taskflow-userProfile";
+const BUCKET = "taskflow-attachment";
+
+export { DB, USR_PROFILE, BUCKET };
