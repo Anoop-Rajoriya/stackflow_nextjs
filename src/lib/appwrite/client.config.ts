@@ -1,4 +1,4 @@
-import { Account, Client, ID, TablesDB } from "appwrite";
+import { Account, Client, ID, TablesDB, Storage, Query } from "appwrite";
 import { appwrite } from "../env";
 
 export const client = new Client()
@@ -7,5 +7,6 @@ export const client = new Client()
 
 export const account = new Account(client);
 export const tablesdb = new TablesDB(client);
+export const storage = new Storage(client)
 
-export { ID };
+export { ID, Query };
