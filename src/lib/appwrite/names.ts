@@ -1,4 +1,4 @@
-const DB = "taskflow-database-id";
+const DB = "taskflow-database";
 const USR_PROFILE = "taskflow-userProfile";
 const BUCKET = "taskflow-attachment";
 
