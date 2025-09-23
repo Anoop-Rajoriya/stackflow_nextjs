@@ -15,6 +15,7 @@ import {
   storage,
 } from "../appwrite/client.config";
 import { BUCKET, DB, USR_PROFILE } from "../appwrite/names";
+import { app } from "../env";
 
 interface Actions {
   register: (credentials: RegisterCredentials) => Promise<void>;
@@ -203,11 +204,45 @@ const useAuthStore = create<AuthStore>()(
           throw error;
         }
       },
-      sendEmailVerification: async () => {},
-      confirmEmailVerification: async (email, secret) => {},
-      sendPasswordReset: async (email) => {},
-      confirmPasswordReset: async (userId, secret, password) => {},
-      setLoading: (loading) => {},
+      sendEmailVerification: async () => {
+        try {
+          await account.createVerification({
+            url: `http://${app.demain}/verify-email`,
+          });
+        } catch (error) {
+          throw error;
+        }
+      },
+      confirmEmailVerification: async (userId, secret) => {
+        try {
+          await account.updateVerification({ userId, secret });
+          await get().getCurrentUser();
+        } catch (error) {
+          throw error;
+        }
+      },
+      sendPasswordReset: async (email) => {
+        try {
+          await account.createRecovery({
+            email,
+            url: `http://${app.demain}/reset-password`,
+          });
+        } catch (error) {
+          throw error;
+        }
+      },
+      confirmPasswordReset: async (userId, secret, password) => {
+        try {
+          await account.updateRecovery({ userId, password, secret });
+        } catch (error) {
+          throw error;
+        }
+      },
+      setLoading: (loading) => {
+        set((state) => {
+          state.loading = loading;
+        });
+      },
     })),
     {
       name: "auth-store",
