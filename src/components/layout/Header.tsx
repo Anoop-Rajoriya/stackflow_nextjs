@@ -7,6 +7,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import useAuthStore from "@/lib/stores/authStore";
 import AskQuestionBtn from "../common/AskQuestionBtn";
+import { ProfileDropdown } from "../common/ProfileDropdown";
 
 type LogoProps = {
   className?: string;
@@ -51,10 +52,6 @@ function Logo({ className, size = "lg", showText = true }: LogoProps) {
 
 function LandingHeader({ className }: React.ComponentProps<"header">) {
   const { isAuthenticated, profile } = useAuthStore();
-  // const { isAuthenticated, profile } = {
-  //   isAuthenticated: true,
-  //   profile: { fullName: "Anoop Rajoriya" },
-  // };
   return (
     <header
       className={cn(
@@ -77,19 +74,7 @@ function LandingHeader({ className }: React.ComponentProps<"header">) {
           ) : (
             <>
               <AskQuestionBtn />
-              <Link
-                href={`/users/${encodeURIComponent(profile?.fullName!)}`}
-                className="flex items-center space-x-2"
-              >
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary">
-                    {profile?.fullName.charAt(0)}
-                  </span>
-                </div>
-                <span className="text-sm font-medium hidden sm:block">
-                  {profile?.fullName}
-                </span>
-              </Link>
+              <ProfileDropdown />
             </>
           )}
         </div>
@@ -98,6 +83,17 @@ function LandingHeader({ className }: React.ComponentProps<"header">) {
   );
 }
 
-function MainHeader({ className }: React.ComponentProps<"header">) {}
+function MainHeader({ className }: React.ComponentProps<"header">) {
+  return (
+    <header
+      className={cn(
+        "border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50",
+        className
+      )}
+    >
+      Main Header
+    </header>
+  );
+}
 
 export { MainHeader, LandingHeader, Logo };

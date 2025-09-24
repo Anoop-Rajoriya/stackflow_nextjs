@@ -14,8 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import useAuthStore from "@/lib/stores/authStore";
+import { Check } from "lucide-react";
 
 const RegisterFormSchema = z.object({
   fullName: z
@@ -25,13 +30,18 @@ const RegisterFormSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 6 characters")
     .max(100, "Password must be at most 100 characters"),
 });
 
 type RegisterFormType = z.infer<typeof RegisterFormSchema>;
 
 function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
+  const { register, loading } = useAuthStore();
+  const [error, setError] = useState<string | null>(null);
+  const [formState, setFormState] = useState<
+    "enable" | "disable" | "successful"
+  >("enable");
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
@@ -41,7 +51,19 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
     },
   });
 
-  function onSubmit(values: RegisterFormType) {}
+  async function onSubmit(values: RegisterFormType) {
+    try {
+      setError(null);
+      setFormState("disable");
+      await register(values);
+      setFormState("successful");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Something wrong happen"
+      );
+      setFormState("enable");
+    }
+  }
 
   return (
     <Form {...form}>
@@ -50,6 +72,13 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
         className={cn("flex flex-col gap-6", className)}
         {...props}
       >
+        {/* Error */}
+        {error && (
+          <p className="text-center capitalize text-sm p-2 text-destructive-foreground bg-destructive/30 border border-destructive rounded">
+            Error: {error}
+          </p>
+        )}
+
         {/* FullName */}
         <FormField
           control={form.control}
@@ -93,10 +122,25 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
           )}
         />
         <div className="flex flex-col gap-3">
-          <Button type="submit" className="w-full">
-            Register
+          {/* Main Register Button */}
+          <Button
+            type="submit"
+            disabled={loading || formState === "disable"}
+            className="w-full"
+          >
+            {loading && formState === "disable" && "Registering..."}
+            {formState === "successful" && (
+              <>
+                {" "}
+                Registered
+                <Check className="size-5" />
+              </>
+            )}
+            {!loading && formState === "enable" && "Register"}
           </Button>
-          <Button variant="outline" className="w-full">
+
+          {/* Google Register Button */}
+          <Button type="button" variant="outline" className="w-full">
             Register with Google
           </Button>
         </div>

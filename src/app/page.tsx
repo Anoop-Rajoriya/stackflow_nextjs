@@ -11,7 +11,6 @@ export default function Landing() {
       <LandingHeader />
       <Hero />
       <Features />
-      <CTA />
       <Footer />
     </Container>
   );

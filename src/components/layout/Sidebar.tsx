@@ -1,9 +1,11 @@
-import React from 'react'
+import React from "react";
 
-function Sidebar() {
-  return (
-    <div>Sidebar</div>
-  )
+function SidebarContent({ className }: React.ComponentProps<"aside">) {
+  return <aside>SidebarContent</aside>;
 }
 
-export default Sidebar
+function Sidebar() {
+  return <div>Sidebar</div>;
+}
+
+export default Sidebar;
