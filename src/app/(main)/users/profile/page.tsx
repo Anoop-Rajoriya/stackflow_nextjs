@@ -1,12 +1,12 @@
 import ProtectedRoute from "@/components/common/ProtectedRoute";
 import React from "react";
 
-function Home() {
+function Profile() {
   return (
     <ProtectedRoute>
-      <section className="flex-1">Home</section>
+      <div>Profile</div>
     </ProtectedRoute>
   );
 }
 
-export default Home;
+export default Profile;

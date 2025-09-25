@@ -35,7 +35,8 @@ interface Actions {
   setLoading: (loading: boolean) => void;
 }
 
-type AuthStore = State & Actions;
+type AuthStore = { hydrated: boolean; setHydrated: () => void } & State &
+  Actions;
 
 const useAuthStore = create<AuthStore>()(
   persist(
@@ -45,13 +46,12 @@ const useAuthStore = create<AuthStore>()(
       profile: null,
       loading: false,
       isAuthenticated: false,
+      hydrated: false,
 
       // Actions
       register: async (credentials) => {
         try {
-          set((state) => {
-            state.loading = true;
-          });
+          set({ loading: true });
 
           // Create account
           const user = await account.create({
@@ -83,24 +83,20 @@ const useAuthStore = create<AuthStore>()(
             data: profile,
           });
 
-          set((state) => {
-            state.user = user;
-            state.profile = createdProfile as unknown as UserProfile;
-            state.isAuthenticated = true;
-            state.loading = false;
+          set({
+            user: user,
+            profile: createdProfile as unknown as UserProfile,
+            isAuthenticated: true,
+            loading: false,
           });
         } catch (error) {
-          set((state) => {
-            state.loading = false;
-          });
+          set({ loading: false });
           throw error;
         }
       },
       login: async (credentials) => {
         try {
-          set((state) => {
-            state.loading = true;
-          });
+          set({ loading: true });
 
           await account.createEmailPasswordSession({
             email: credentials.email,
@@ -108,9 +104,7 @@ const useAuthStore = create<AuthStore>()(
           });
           await get().getCurrentUser();
         } catch (error) {
-          set((state) => {
-            state.loading = false;
-          });
+          set({ loading: false });
           throw error;
         }
       },
@@ -120,19 +114,17 @@ const useAuthStore = create<AuthStore>()(
         } catch (error) {
           // Even if logout fails, clear local state
         } finally {
-          set((state) => {
-            state.user = null;
-            state.profile = null;
-            state.isAuthenticated = false;
-            state.loading = false;
+          set({
+            user: null,
+            profile: null,
+            isAuthenticated: false,
+            loading: false,
           });
         }
       },
       getCurrentUser: async () => {
         try {
-          set((state) => {
-            state.loading = true;
-          });
+          set({ loading: true });
 
           const user = await account.get();
 
@@ -145,18 +137,18 @@ const useAuthStore = create<AuthStore>()(
 
           const profile = profileResponse.rows[0] as unknown as UserProfile;
 
-          set((state) => {
-            state.user = user;
-            state.profile = profile || null;
-            state.isAuthenticated = true;
-            state.loading = false;
+          set({
+            user: user,
+            profile: profile || null,
+            isAuthenticated: true,
+            loading: false,
           });
         } catch (error) {
-          set((state) => {
-            state.user = null;
-            state.profile = null;
-            state.isAuthenticated = false;
-            state.loading = false;
+          set({
+            user: null,
+            profile: null,
+            isAuthenticated: false,
+            loading: false,
           });
         }
       },
@@ -239,18 +231,19 @@ const useAuthStore = create<AuthStore>()(
         }
       },
       setLoading: (loading) => {
-        set((state) => {
-          state.loading = loading;
-        });
+        set({ loading });
+      },
+      setHydrated: () => {
+        set({ hydrated: true });
       },
     })),
     {
       name: "auth-store",
-      partialize: (state) => ({
-        user: state.user,
-        profile: state.profile,
-        isAuthenticated: state.isAuthenticated,
-      }),
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (!error) state?.setHydrated();
+        };
+      },
     }
   )
 );

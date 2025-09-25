@@ -14,13 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import useAuthStore from "@/lib/stores/authStore";
 import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const RegisterFormSchema = z.object({
   fullName: z
@@ -37,6 +37,7 @@ const RegisterFormSchema = z.object({
 type RegisterFormType = z.infer<typeof RegisterFormSchema>;
 
 function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
+  const router = useRouter();
   const { register, loading } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [formState, setFormState] = useState<
@@ -57,6 +58,7 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
       setFormState("disable");
       await register(values);
       setFormState("successful");
+      router.push("/");
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Something wrong happen"
@@ -131,7 +133,6 @@ function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
             {loading && formState === "disable" && "Registering..."}
             {formState === "successful" && (
               <>
-                {" "}
                 Registered
                 <Check className="size-5" />
               </>

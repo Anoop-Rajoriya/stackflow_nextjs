@@ -4,8 +4,6 @@ import React from "react";
 import Link from "next/link";
 import {
   Menu,
-  LogOut,
-  Settings,
   LucideIcon,
   Home,
   CircleQuestionMark,
@@ -50,7 +48,7 @@ function SidebarContentItems({ className, href, label, icon: Icon }: Props) {
 export function SidebarContent({ className }: React.ComponentProps<"aside">) {
   const navLinks = [
     {
-      href: "/home",
+      href: "/",
       label: "Home",
       icon: Home,
     },

@@ -16,6 +16,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import useAuthStore from "@/lib/stores/authStore";
+import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const LoginFormSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -28,6 +32,12 @@ const LoginFormSchema = z.object({
 type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
+  const router = useRouter();
+  const { login, loading } = useAuthStore();
+  const [formState, setFormState] = useState<
+    "enable" | "disable" | "successful"
+  >("enable");
+  const [error, setError] = useState<string | null>(null);
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -36,7 +46,20 @@ function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
     },
   });
 
-  function onSubmit(values: LoginFormType) {}
+  async function onSubmit(values: LoginFormType) {
+    try {
+      setError(null);
+      setFormState("disable");
+      await login(values);
+      setFormState("successful");
+      router.push("/");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Something wrong happen"
+      );
+      setFormState("enable");
+    }
+  }
 
   return (
     <Form {...form}>
@@ -45,6 +68,13 @@ function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
         className={cn("flex flex-col gap-6", className)}
         {...props}
       >
+        {/* Error */}
+        {error && (
+          <p className="text-center capitalize text-sm p-2 text-destructive-foreground bg-destructive/30 border border-destructive rounded">
+            Error: {error}
+          </p>
+        )}
+
         {/* Email */}
         <FormField
           control={form.control}
@@ -82,8 +112,19 @@ function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
           )}
         />
         <div className="flex flex-col gap-3">
-          <Button type="submit" className="w-full">
-            Login
+          <Button
+            type="submit"
+            disabled={loading || formState === "disable"}
+            className="w-full"
+          >
+            {loading && formState === "disable" && "Login..."}
+            {formState === "successful" && (
+              <>
+                Logged In
+                <Check className="size-5" />
+              </>
+            )}
+            {!loading && formState === "enable" && "Login"}
           </Button>
           <Button variant="outline" className="w-full">
             Login with Google

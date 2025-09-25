@@ -17,6 +17,7 @@ import { Input } from "../ui/input";
 import useAuthStore from "@/lib/stores/authStore";
 import { cn } from "@/lib/utils";
 import Sidebar from "./Sidebar";
+import { useRouter } from "next/navigation";
 
 type LogoProps = {
   className?: string;
@@ -44,7 +45,12 @@ export function Logo({ className, small = false }: LogoProps) {
           SF
         </span>
       </div>
-      <span className={cn("font-bold hover:underline", small ? "text-base" : "text-xl")}>
+      <span
+        className={cn(
+          "font-bold hover:underline",
+          small ? "text-base" : "text-xl"
+        )}
+      >
         StackFlow
       </span>
     </Link>
@@ -52,6 +58,8 @@ export function Logo({ className, small = false }: LogoProps) {
 }
 
 export function ProfileDropDown() {
+  const router = useRouter();
+  const { logout } = useAuthStore();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -64,13 +72,17 @@ export function ProfileDropDown() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/users/profile")}>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
+            await logout();
+          }}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Logout</span>
         </DropdownMenuItem>
@@ -102,7 +114,8 @@ export function SearchBar({ className }: SearchBarProps) {
 }
 
 function Header() {
-  const { isAuthenticated, profile, loading } = useAuthStore();
+  const { isAuthenticated, profile, loading, hydrated } = useAuthStore();
+  console.log(isAuthenticated, hydrated);
   return (
     <header className="p-2 flex flex-col space-y-3 md:space-y-0 sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center justify-between">
@@ -112,12 +125,15 @@ function Header() {
         </div>
         <div className="right flex space-x-2">
           <SearchBar className="hidden sm:block max-w-sm" />
-          {!loading &&
-            (isAuthenticated && profile ? (
+          {hydrated ? (
+            isAuthenticated && profile ? (
               <ProfileDropDown />
             ) : (
               <LoginAndRegisterBtns />
-            ))}
+            )
+          ) : (
+            <div>Loading...</div>
+          )}
         </div>
       </div>
       <SearchBar className="sm:hidden" />
