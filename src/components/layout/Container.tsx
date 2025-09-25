@@ -1,11 +1,16 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 
-function Container({ children, className }: React.ComponentProps<"main">) {
+type Props = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+function Container({ children, className }: Props) {
   return (
     <main
       className={cn(
-        "container mx-auto p-2 flex flex-col min-h-screen",
+        "container mx-auto min-h-screen flex flex-col bg-background",
         className
       )}
     >

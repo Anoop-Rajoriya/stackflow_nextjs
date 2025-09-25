@@ -89,11 +89,11 @@ function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
             Login with Google
           </Button>
         </div>
-        <div className=" text-center text-sm">
+        <div className="text-center text-sm">
           Don't have an account?{" "}
           <Link
             href="/register"
-            className="underline-offset-4 text-primary-foreground hover:underline font-semibold"
+            className="underline-offset-4 font-semibold hover:underline"
           >
             Register
           </Link>
