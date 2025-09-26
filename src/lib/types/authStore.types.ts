@@ -1,17 +1,21 @@
-import { Models } from "node-appwrite";
-
-export interface UserPref {}
+import { Models } from "appwrite";
 
 export interface UserProfile {
   userId: string;
   fullName: string;
   email: string;
-  bio?: string | null;
-  avatar?: string | null;
+  emailVerification: boolean;
+  createdAt: string;
+  updatedAt: string;
+  passwordUpdate: string;
+  reputation: Number;
+  theme?: "dark" | "light" | "system";
+  bio?: string;
+  avatar?: string;
 }
 
 export interface State {
-  user: Models.User<UserPref> | null;
+  user: Models.User | null;
   profile: UserProfile | null;
   loading: boolean;
   isAuthenticated: boolean;

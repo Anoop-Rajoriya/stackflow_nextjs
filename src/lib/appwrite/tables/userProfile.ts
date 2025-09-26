@@ -17,12 +17,15 @@ export default async function createUserProfileTable() {
   });
 
   /**
-   * Create Columns:
-   * userid,
-   * full name,
-   * bio,
-   * avatar,
-   * email
+   * userId: string;
+   * fullName: string;
+   * email: string;
+   * emailVerification: boolean;
+   * passwordUpdate: string;
+   * reputation: Number;
+   * theme?: string;
+   * bio?: string;
+   * avatar?: string;
    *
    */
 
@@ -47,6 +50,33 @@ export default async function createUserProfileTable() {
       key: "email",
       size: 50,
       required: true,
+    }),
+    tablesdb.createBooleanColumn({
+      databaseId: DB,
+      tableId: USR_PROFILE,
+      key: "emailVerification",
+      required: true,
+    }),
+    tablesdb.createDatetimeColumn({
+      databaseId: DB,
+      tableId: USR_PROFILE,
+      key: "passwordUpdate",
+      required: true,
+    }),
+    tablesdb.createIntegerColumn({
+      databaseId: DB,
+      tableId: USR_PROFILE,
+      key: "reputation",
+      required: false,
+      xdefault: 0,
+    }),
+    tablesdb.createStringColumn({
+      databaseId: DB,
+      tableId: USR_PROFILE,
+      key: "theme",
+      size: 50,
+      required: false,
+      xdefault: "system",
     }),
     tablesdb.createStringColumn({
       databaseId: DB,
