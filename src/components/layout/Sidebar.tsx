@@ -7,7 +7,6 @@ import {
   LucideIcon,
   Home,
   CircleQuestionMark,
-  Tags,
   Users,
 } from "lucide-react";
 import {
@@ -56,11 +55,6 @@ export function SidebarContent({ className }: React.ComponentProps<"aside">) {
       href: "/questions",
       label: "Questions",
       icon: CircleQuestionMark,
-    },
-    {
-      href: "/tags",
-      label: "Tags",
-      icon: Tags,
     },
     {
       href: "/users",

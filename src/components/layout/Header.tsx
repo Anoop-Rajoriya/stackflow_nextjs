@@ -64,7 +64,7 @@ export function ProfileDropDown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="h-8 w-8 cursor-pointer">
-          <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+          <AvatarImage src="/images/avatars.png" alt="User" />
           <AvatarFallback>SF</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -114,8 +114,7 @@ export function SearchBar({ className }: SearchBarProps) {
 }
 
 function Header() {
-  const { isAuthenticated, profile, loading, hydrated } = useAuthStore();
-  console.log(isAuthenticated, hydrated);
+  const { isAuthenticated, profile, hydrated } = useAuthStore();
   return (
     <header className="p-2 flex flex-col space-y-3 md:space-y-0 sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center justify-between">

@@ -6,15 +6,17 @@ import React, { useEffect } from "react";
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, hydrated } = useAuthStore();
 
   useEffect(() => {
-    if (!isAuthenticated && pathname === "/") {
-      router.push("/questions");
-    } else if (!isAuthenticated) {
-      router.push("/login");
+    if (hydrated) {
+      if (!isAuthenticated && pathname === "/") {
+        router.push("/questions");
+      } else if (!isAuthenticated) {
+        router.push("/login");
+      }
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, hydrated, router]);
 
   if (!isAuthenticated) return null;
 

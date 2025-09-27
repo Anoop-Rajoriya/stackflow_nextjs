@@ -25,8 +25,8 @@ import { useRouter } from "next/navigation";
 const RegisterFormSchema = z.object({
   fullName: z
     .string()
-    .min(2, "Full name must be at least 2 characters")
-    .max(50, "Full name must be at most 50 characters"),
+    .min(4, "Full name must be at least 4 characters")
+    .max(20, "Full name must be at most 20 characters"),
   email: z.string().email("Invalid email address"),
   password: z
     .string()
