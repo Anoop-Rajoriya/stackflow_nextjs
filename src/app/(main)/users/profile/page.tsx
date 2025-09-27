@@ -50,14 +50,3 @@ function Profile() {
 }
 
 export default Profile;
-
-/**
- *
- * full name,
- * emailVerified,
- * email,
- * bio,
- * joined at,
- * theme,
- * reputation
- */
