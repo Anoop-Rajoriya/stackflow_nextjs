@@ -20,6 +20,7 @@ export default async function createAnswereTable() {
   /**
    * title
    * body
+   * status
    * questionId
    * userId
    */
@@ -38,6 +39,14 @@ export default async function createAnswereTable() {
       key: "body",
       size: 10000,
       required: true,
+    }),
+    tablesdb.createEnumColumn({
+      databaseId: DB,
+      tableId: ANSWERE,
+      key: "status",
+      elements: ["active", "accepted"],
+      xdefault: "active",
+      required: false,
     }),
     tablesdb.createStringColumn({
       databaseId: DB,

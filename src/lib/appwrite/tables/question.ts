@@ -52,8 +52,9 @@ export default async function createQuestionTable() {
       databaseId: DB,
       tableId: QUESTION,
       key: "status",
-      elements: ["active", "inactive"],
-      required: true,
+      elements: ["open", "answered", "closed"],
+      xdefault: "open",
+      required: false,
     }),
     tablesdb.createStringColumn({
       databaseId: DB,
