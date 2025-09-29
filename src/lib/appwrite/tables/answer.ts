@@ -1,13 +1,13 @@
 import { Permission, Role } from "node-appwrite";
-import { ANSWERE, DB } from "../names";
+import { ANSWER, DB } from "../names";
 import { tablesdb } from "../server.config";
 
-export default async function createAnswereTable() {
+export default async function createAnswerTable() {
   // Create Table
   await tablesdb.createTable({
     databaseId: DB,
-    tableId: ANSWERE,
-    name: ANSWERE,
+    tableId: ANSWER,
+    name: ANSWER,
     permissions: [
       Permission.read(Role.any()),
       Permission.write(Role.users()),
@@ -28,21 +28,21 @@ export default async function createAnswereTable() {
   await Promise.all([
     tablesdb.createStringColumn({
       databaseId: DB,
-      tableId: ANSWERE,
+      tableId: ANSWER,
       key: "title",
       size: 100,
       required: true,
     }),
     tablesdb.createStringColumn({
       databaseId: DB,
-      tableId: ANSWERE,
+      tableId: ANSWER,
       key: "body",
       size: 10000,
       required: true,
     }),
     tablesdb.createEnumColumn({
       databaseId: DB,
-      tableId: ANSWERE,
+      tableId: ANSWER,
       key: "status",
       elements: ["active", "accepted"],
       xdefault: "active",
@@ -50,14 +50,14 @@ export default async function createAnswereTable() {
     }),
     tablesdb.createStringColumn({
       databaseId: DB,
-      tableId: ANSWERE,
+      tableId: ANSWER,
       key: "questionId",
       size: 50,
       required: true,
     }),
     tablesdb.createStringColumn({
       databaseId: DB,
-      tableId: ANSWERE,
+      tableId: ANSWER,
       key: "userId",
       size: 50,
       required: true,

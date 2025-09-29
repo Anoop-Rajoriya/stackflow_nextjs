@@ -1,6 +1,6 @@
 import { DB } from "./names";
 import { tablesdb } from "./server.config";
-import createAnswereTable from "./tables/answere";
+import createAnswerTable from "./tables/answer";
 import createQuestionTable from "./tables/question";
 import createUserProfileTable from "./tables/userProfile";
 
@@ -20,7 +20,7 @@ export default async function getOrCreateDB() {
       await Promise.all([
         createUserProfileTable(),
         createQuestionTable(),
-        createAnswereTable(),
+        createAnswerTable(),
       ]);
 
       console.log("File:- setupDB, tableDB & tables created!");
