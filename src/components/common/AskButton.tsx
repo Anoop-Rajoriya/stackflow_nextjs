@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 function AskButton() {
   return (
     <Button size="lg">
-      <Link href="/question/ask">Ask Question</Link>
+      <Link href="/questions/ask">Ask Question</Link>
     </Button>
   );
 }
