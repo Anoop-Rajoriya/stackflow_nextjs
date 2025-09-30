@@ -12,7 +12,7 @@ function MainLayout({ children }: Props) {
   return (
     <Container>
       <Header />
-      <div className="flex-1 flex py-2 space-x-4">
+      <div className="flex-1 flex p-2 space-x-4">
         <SidebarContent className="hidden md:block max-w-52" />
         {children}
       </div>

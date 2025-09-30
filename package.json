@@ -19,6 +19,8 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-toggle": "^1.1.10",
+    "@radix-ui/react-toggle-group": "^1.1.11",
     "@uiw/react-md-editor": "^4.0.8",
     "appwrite": "^20.0.0",
     "class-variance-authority": "^0.7.1",
