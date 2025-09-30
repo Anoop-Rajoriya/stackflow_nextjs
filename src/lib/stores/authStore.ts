@@ -13,7 +13,7 @@ import {
   tablesdb,
   storage,
 } from "../appwrite/client.config";
-import { BUCKET, DB, USR_PROFILE } from "../appwrite/names";
+import { BUCKET, DB, PROFILE } from "../appwrite/names";
 import { app } from "../env";
 
 interface Actions {
@@ -79,7 +79,7 @@ const useAuthStore = create<AuthStore>()(
 
           const createdProfile = await tablesdb.createRow({
             databaseId: DB,
-            tableId: USR_PROFILE,
+            tableId: PROFILE,
             rowId: ID.unique(),
             data: profile,
           });
@@ -144,7 +144,7 @@ const useAuthStore = create<AuthStore>()(
           // Fetch user profile
           const profileResponse = await tablesdb.listRows({
             databaseId: DB,
-            tableId: USR_PROFILE,
+            tableId: PROFILE,
             queries: [Query.equal("userId", user.$id)],
           });
 
@@ -154,8 +154,8 @@ const useAuthStore = create<AuthStore>()(
             fullName: profileRow.fullName,
             email: profileRow.email,
             emailVerification: profileRow.emailVerification,
-            createdAt: profileRow.createdAt,
-            updatedAt: profileRow.updatedAt,
+            createdAt: profileRow.$createdAt,
+            updatedAt: profileRow.$updatedAt,
             passwordUpdate: profileRow.passwordUpdate,
             reputation: profileRow.reputation,
             theme: profileRow.theme,
@@ -188,7 +188,7 @@ const useAuthStore = create<AuthStore>()(
 
       //     const updatedProfile = await tablesdb.updateRow({
       //       databaseId: DB,
-      //       tableId: USR_PROFILE,
+      //       tableId: PROFILE,
       //       rowId: profile.userId,
       //       data: profileData,
       //     });

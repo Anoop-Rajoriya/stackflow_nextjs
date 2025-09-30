@@ -1,9 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
-import getOrCreateDB from "./lib/appwrite/setupDB";
-import getOrCreateStorage from "./lib/appwrite/setupStorage";
+import appwriteSetup from "./lib/appwrite/appwrite.setup";
 
 export async function middleware(request: NextRequest) {
-  await Promise.all([getOrCreateDB(), getOrCreateStorage()]);
+  await appwriteSetup();
 
   return NextResponse.next();
 }

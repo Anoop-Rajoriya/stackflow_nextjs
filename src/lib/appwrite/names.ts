@@ -1,7 +1,7 @@
-const DB = "taskflow-database";
-const USR_PROFILE = "taskflow-userProfile";
-const QUESTION = "taskflow-question";
-const ANSWER = "taskflow-answere";
-const BUCKET = "taskflow-attachment";
+const DB = "taskflowTableDB";
+const PROFILE = "profile";
+const QUESTION = "question";
+const ANSWER = "answer";
+const BUCKET = "attachment";
 
-export { DB, USR_PROFILE, QUESTION, ANSWER, BUCKET };
+export { DB, PROFILE, QUESTION, ANSWER, BUCKET };

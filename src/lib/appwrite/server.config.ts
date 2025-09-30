@@ -1,4 +1,12 @@
-import { Client, TablesDB, ID, Storage } from "node-appwrite";
+import {
+  Client,
+  Account,
+  TablesDB,
+  ID,
+  Storage,
+  Permission,
+  Role,
+} from "node-appwrite";
 import { appwrite } from "../env";
 
 export const client = new Client()
@@ -6,6 +14,7 @@ export const client = new Client()
   .setProject(appwrite.projectId)
   .setKey(appwrite.apiKey);
 
+export const account = new Account(client);
 export const tablesdb = new TablesDB(client);
 export const storage = new Storage(client);
-export { ID };
+export { ID, Permission, Role };
