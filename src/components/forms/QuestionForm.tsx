@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import React, { useState } from "react";
+import axios from "axios";
 import Editor from "../common/Editor";
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -23,6 +24,10 @@ import {
   FormMessage,
 } from "../ui/form";
 import TagInput from "../common/TagInput";
+import { Alert, AlertTitle } from "../ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import useAuthStore from "@/lib/stores/authStore";
 
 const FormSchema = z.object({
   title: z
@@ -42,8 +47,10 @@ const FormSchema = z.object({
 type FormType = z.infer<typeof FormSchema>;
 
 function QuestionForm() {
+  const { profile } = useAuthStore();
+  const router = useRouter();
   const [formState, setFormState] = useState<
-    "enable" | "disable" | "succesfull"
+    "enable" | "loading" | "succesfull"
   >("enable");
   const [error, setError] = useState<string | null>(null);
   const form = useForm<FormType>({
@@ -55,8 +62,23 @@ function QuestionForm() {
     },
   });
 
-  function onSubmit(value: FormType) {
-    console.log(value);
+  async function onSubmit(value: FormType) {
+    try {
+      setError(null);
+      setFormState("loading");
+      await axios.post("/api/questions", { ...value, userId: profile?.userId });
+      setFormState("succesfull");
+      form.reset();
+      router.push("/");
+    } catch (error) {
+      setFormState("enable");
+      console.log(error);
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data.error || error.message);
+      } else {
+        setError("Something wrong");
+      }
+    }
   }
   function onReset() {
     form.reset();
@@ -67,6 +89,14 @@ function QuestionForm() {
         className="max-w-4xl w-full space-y-5"
         onSubmit={form.handleSubmit(onSubmit)}
       >
+        {/* Error */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>{error}</AlertTitle>
+          </Alert>
+        )}
+
         {/* Title */}
         <FormField
           control={form.control}
@@ -127,8 +157,16 @@ function QuestionForm() {
           )}
         />
         <div className="flex space-x-6 justify-center">
-          <Button type="submit" size="lg">
-            Post Your Question
+          <Button
+            disabled={formState === "loading" || formState === "succesfull"}
+            type="submit"
+            size="lg"
+          >
+            {formState === "loading"
+              ? "Posting Your Question..."
+              : formState === "succesfull"
+              ? "Your Question Posted"
+              : "Post Your Question"}
           </Button>
           <Button onClick={onReset} type="button" size="lg" variant="outline">
             Cancel

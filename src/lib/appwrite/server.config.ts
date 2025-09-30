@@ -6,6 +6,7 @@ import {
   Storage,
   Permission,
   Role,
+  Query,
 } from "node-appwrite";
 import { appwrite } from "../env";
 
@@ -17,4 +18,4 @@ export const client = new Client()
 export const account = new Account(client);
 export const tablesdb = new TablesDB(client);
 export const storage = new Storage(client);
-export { ID, Permission, Role };
+export { ID, Permission, Role, Query };

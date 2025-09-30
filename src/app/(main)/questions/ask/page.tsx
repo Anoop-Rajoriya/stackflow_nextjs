@@ -6,7 +6,7 @@ import React from "react";
 function Ask() {
   return (
     <ProtectedRoute>
-      <section className="space-y-4 flex-1">
+      <section className="space-y-4 flex-1 pb-4">
         <div className="mb-6">
           <h2 className="text-3xl font-bold text-foreground flex justify-between items-center">
             Ask a Question
