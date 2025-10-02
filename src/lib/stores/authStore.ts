@@ -87,6 +87,7 @@ const useAuthStore = create<AuthStore>()(
           set({
             user: user,
             profile: {
+              id: createdProfile.$id,
               userId: createdProfile.userId,
               fullName: createdProfile.fullName,
               email: createdProfile.email,
@@ -150,6 +151,7 @@ const useAuthStore = create<AuthStore>()(
 
           const profileRow = profileResponse.rows[0];
           const profile = {
+            id: profileRow.$id,
             userId: profileRow.userId,
             fullName: profileRow.fullName,
             email: profileRow.email,

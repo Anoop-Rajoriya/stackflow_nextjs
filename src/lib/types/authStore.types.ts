@@ -1,6 +1,7 @@
 import { Models } from "appwrite";
 
 export interface UserProfile {
+  id: string;
   userId: string;
   fullName: string;
   email: string;
