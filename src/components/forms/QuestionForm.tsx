@@ -66,7 +66,7 @@ function QuestionForm() {
     try {
       setError(null);
       setFormState("loading");
-      await axios.post("/api/questions", { ...value, userId: profile?.userId });
+      await axios.post(`/api/questions`, { ...value, userId: profile?.id });
       setFormState("succesfull");
       form.reset();
       router.push("/");
