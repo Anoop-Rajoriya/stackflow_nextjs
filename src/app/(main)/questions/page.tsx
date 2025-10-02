@@ -1,7 +1,9 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import AskButton from "@/components/common/AskButton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import QuestionCard from "@/components/questions/QuestionCard";
+import QuestionCard, { Question } from "@/components/questions/QuestionCard";
 
 import {
   Pagination,
@@ -12,6 +14,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import axios from "axios";
 
 // Mock data
 const questions = [
@@ -102,6 +105,24 @@ const questions = [
 ];
 
 function Questions() {
+  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!questions) {
+      setLoading(true);
+      axios
+        .get("/api/questions")
+        .then((res) => {
+          setQuestions(res.data.questions);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => setLoading(false));
+    }
+  });
+
   return (
     <section className="space-y-4 flex-1">
       {/* Page Header */}
@@ -112,7 +133,7 @@ function Questions() {
       {/* Page Filter */}
       <div className="flex items-center justify-between space-x-2">
         <span className="font-semibold text-muted-foreground capitalize">
-          {questions.length} questions
+          {questions ? questions.length : 0} questions
         </span>
         <div>
           <ToggleGroup variant="outline" type="single" defaultValue="newest">
@@ -141,10 +162,15 @@ function Questions() {
         </div>
       </div>
       {/* Page Card Container */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {questions.length > 0 &&
-          questions.map((que, indx) => <QuestionCard key={indx} data={que} />)}
-      </div>
+      {!questions ? (
+        <></>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          {questions.map((que, indx) => (
+            <QuestionCard key={indx} data={que} />
+          ))}
+        </div>
+      )}
       {/* Pagination */}
       <Pagination>
         <PaginationContent>

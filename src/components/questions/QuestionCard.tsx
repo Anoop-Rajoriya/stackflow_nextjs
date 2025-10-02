@@ -1,24 +1,21 @@
 import React from "react";
-import AskButton from "../common/AskButton";
 import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Eye } from "lucide-react";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 
-type Question = {
+export type Question = {
   id: number;
   title: string;
   body: string;
-  author: string;
-  authorRep: number;
-  votes: number;
-  answers: number;
-  views: number;
   tags: string[];
-  hasAcceptedAnswer: boolean;
-  timestamp: string;
-  bounty: number | null;
+  status: string;
+  authorId: string;
+  authorName: string;
+  authorRepputation: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type Props = {
@@ -29,18 +26,21 @@ type Props = {
 function QuestionCard({ data, className }: Props) {
   const {
     id,
-    votes,
-    hasAcceptedAnswer,
-    answers,
-    views,
     title,
-    bounty,
     body,
     tags,
-    author,
-    authorRep,
-    timestamp,
+    status,
+    authorName,
+    authorRepputation,
+    createdAt,
   } = data;
+  const [votes, hasAcceptedAnswer, answers, views, bounty] = [
+    50,
+    false,
+    30,
+    44,
+    5,
+  ];
 
   return (
     <Card>
@@ -76,7 +76,7 @@ function QuestionCard({ data, className }: Props) {
           </div>
         </div>
         {/* Content Column */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 flex flex-col">
           <div className="flex items-start gap-2 mb-2">
             <Link
               href={`questions/${id}`}
@@ -87,7 +87,7 @@ function QuestionCard({ data, className }: Props) {
             {bounty && <Badge variant="default">+{bounty}</Badge>}
           </div>
 
-          <p className="text-sm mb-3 line-clamp-2 text-muted-foreground">
+          <p className="text-sm mb-3 line-clamp-2 text-muted-foreground flex-1">
             {body}
           </p>
 
@@ -99,15 +99,13 @@ function QuestionCard({ data, className }: Props) {
             ))}
           </div>
 
-          <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center justify-between text-xs pt-2">
             <div className="flex items-center gap-2 text-muted-foreground">
-              <span className="font-medium">{author}</span>
+              <span className="font-medium">{authorName}</span>
               <span className="">•</span>
-              <span className="font-semibold">
-                {authorRep.toLocaleString()}
-              </span>
+              <span className="font-semibold">{authorRepputation}</span>
             </div>
-            <span className="text-muted-foreground">asked {timestamp}</span>
+            <span className="text-muted-foreground">asked {createdAt}</span>
           </div>
         </div>
       </CardContent>

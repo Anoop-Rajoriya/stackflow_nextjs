@@ -4,19 +4,45 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Params = {};
 
-export async function GET(req: NextRequest, params: Params) {
+export async function GET(req: NextRequest) {
   try {
-    const questions = await tablesdb.listRows({
+    // Collect data and validate
+    const response = await tablesdb.listRows({
       databaseId: DB,
       tableId: QUESTION,
+      queries: [Query.select(["*", "userId.fullName", "userId.reputation"])],
     });
 
-    if (!questions.rows.length) {
+    if (!response.total) {
       return NextResponse.json(
-        { message: "No question available", questions: [], total: 0 },
+        { message: "Questions not availble", questions: null, total: 0 },
         { status: 200 }
       );
     }
+
+    // Transformed response data
+    const questions = response.rows.map((q) => ({
+      id: q.$id,
+      title: q.title,
+      body: q.body,
+      tags: q.tags,
+      status: q.status,
+      authorName: q.userId.fullName,
+      authorReputation: q.userId.reputation,
+      authorId: q.userId.$id,
+      createdAt: new Date(q.$createdAt).toDateString(),
+      updatedAt: new Date(q.$updatedAt).toDateString(),
+    }));
+
+    // Return response
+    return NextResponse.json(
+      {
+        message: "All Questions",
+        questions: questions,
+        total: questions.length,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
