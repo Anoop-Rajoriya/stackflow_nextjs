@@ -8,7 +8,6 @@ import createUserProfileTable from "./tables/userProfile";
 async function ensureDatabase() {
   try {
     await tablesdb.get({ databaseId: DB });
-    console.log(`Database "${DB}" already exists`);
   } catch {
     console.log(`Creating database "${DB}"...`);
     await tablesdb.create({ databaseId: DB, name: DB });
@@ -26,7 +25,6 @@ async function ensureDatabase() {
 async function ensureBucket() {
   try {
     await storage.getBucket({ bucketId: BUCKET });
-    console.log(`Bucket "${BUCKET}" already exists`);
   } catch {
     console.log(`Creating bucket "${BUCKET}"...`);
     await storage.createBucket({
@@ -46,11 +44,9 @@ async function ensureBucket() {
 
 /* ---------------- Main Setup ---------------- */
 export default async function appwriteSetup() {
-  console.log("Starting Appwrite setup...");
   try {
     await ensureDatabase();
     await ensureBucket();
-    console.log("Appwrite setup completed successfully");
   } catch (err) {
     console.error("Appwrite setup failed:", err);
   }
