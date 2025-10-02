@@ -1,6 +1,11 @@
-import { Permission, Role } from "node-appwrite";
-import { ANSWER, DB } from "../names";
-import { tablesdb } from "../server.config";
+import { ANSWER, DB, PROFILE, QUESTION } from "../names";
+import {
+  tablesdb,
+  Permission,
+  RelationMutate,
+  RelationshipType,
+  Role,
+} from "../server.config";
 
 export default async function createAnswerTable() {
   // Create Table
@@ -10,7 +15,7 @@ export default async function createAnswerTable() {
     name: ANSWER,
     permissions: [
       Permission.read(Role.any()),
-      Permission.write(Role.users()),
+      Permission.create(Role.users()),
       Permission.update(Role.users()),
       Permission.delete(Role.users()),
     ],
@@ -48,19 +53,21 @@ export default async function createAnswerTable() {
       xdefault: "active",
       required: false,
     }),
-    tablesdb.createStringColumn({
+    tablesdb.createRelationshipColumn({
       databaseId: DB,
       tableId: ANSWER,
       key: "questionId",
-      size: 50,
-      required: true,
+      relatedTableId: QUESTION,
+      type: RelationshipType.ManyToOne,
+      onDelete: RelationMutate.Cascade,
     }),
-    tablesdb.createStringColumn({
+    tablesdb.createRelationshipColumn({
       databaseId: DB,
       tableId: ANSWER,
       key: "userId",
-      size: 50,
-      required: true,
+      relatedTableId: PROFILE,
+      type: RelationshipType.ManyToOne,
+      onDelete: RelationMutate.Cascade,
     }),
   ]);
 }

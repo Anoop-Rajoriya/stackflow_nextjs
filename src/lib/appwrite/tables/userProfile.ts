@@ -1,5 +1,5 @@
-import { Permission, Role } from "node-appwrite";
-import { DB, PROFILE } from "../names";
+import { Permission, RelationshipType, Role } from "node-appwrite";
+import { DB, PROFILE, QUESTION } from "../names";
 import { tablesdb } from "../server.config";
 
 export default async function createUserProfileTable() {
@@ -17,16 +17,15 @@ export default async function createUserProfileTable() {
   });
 
   /**
-   * userId: string;
-   * fullName: string;
-   * email: string;
-   * emailVerification: boolean;
-   * passwordUpdate: string;
-   * reputation: Number;
-   * theme?: string;
-   * bio?: string;
-   * avatar?: string;
-   *
+   * userId
+   * fullName
+   * email
+   * emailVerification
+   * passwordUpdate
+   * reputation
+   * theme?
+   * bio?
+   * avatar?
    */
 
   await Promise.all([

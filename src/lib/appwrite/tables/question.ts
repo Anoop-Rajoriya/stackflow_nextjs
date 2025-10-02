@@ -1,6 +1,11 @@
-import { Permission, Role } from "node-appwrite";
-import { DB, QUESTION } from "../names";
-import { tablesdb, ID } from "../server.config";
+import { DB, PROFILE, QUESTION } from "../names";
+import {
+  tablesdb,
+  Permission,
+  RelationshipType,
+  Role,
+  RelationMutate,
+} from "../server.config";
 
 export default async function createQuestionTable() {
   // Create Table
@@ -56,12 +61,13 @@ export default async function createQuestionTable() {
       xdefault: "open",
       required: false,
     }),
-    tablesdb.createStringColumn({
+    tablesdb.createRelationshipColumn({
       databaseId: DB,
       tableId: QUESTION,
       key: "userId",
-      size: 50,
-      required: true,
+      relatedTableId: PROFILE,
+      type: RelationshipType.ManyToOne,
+      onDelete: RelationMutate.Cascade,
     }),
   ]);
 }
