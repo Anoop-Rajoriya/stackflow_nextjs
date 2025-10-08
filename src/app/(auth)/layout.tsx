@@ -1,12 +1,9 @@
-import Container from "@/components/layout/Container";
-import React from "react";
+import React from 'react'
 
-function AuthLayout({ children }: React.ComponentProps<"main">) {
+function AuthLayout() {
   return (
-    <Container className="flex  items-center justify-center p-6 md:p-10">
-      {children}
-    </Container>
-  );
+    <div>AuthLayout</div>
+  )
 }
 
-export default AuthLayout;
+export default AuthLayout
