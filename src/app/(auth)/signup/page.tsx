@@ -1,9 +1,12 @@
-import React from 'react'
+import SignupForm from "@/components/form/SignupForm";
+import React from "react";
 
 function Signup() {
   return (
-    <div>Signup</div>
-  )
+    <div className="w-full max-w-md mx-auto">
+      <SignupForm />
+    </div>
+  );
 }
 
-export default Signup
+export default Signup;
