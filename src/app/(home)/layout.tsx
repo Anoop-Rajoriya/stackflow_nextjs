@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
+import Container from "@/components/layout/Container";
+import Footer from "@/components/layout/Footer";
+import Header from "@/components/layout/Header";
+import { SideBarContent } from "@/components/layout/SideBar";
 
-function HomeLayout() {
+function HomeLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>HomeLayout</div>
-  )
+    <Container>
+      <Header />
+      <div className="flex space-x-4 py-2 pt-6">
+        <SideBarContent className="hidden md:flex" />
+        {children}
+      </div>
+      <Footer />
+    </Container>
+  );
 }
 
-export default HomeLayout
+export default HomeLayout;
