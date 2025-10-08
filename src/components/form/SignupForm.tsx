@@ -9,7 +9,14 @@ import { SignupSchema, SignupValues } from "@/lib/zodSchemas";
 import { Logo } from "../shared/Logo";
 import { AlertCircleIcon } from "lucide-react";
 import { Separator } from "../ui/separator";
-import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -23,7 +30,7 @@ import {
 import Link from "next/link";
 
 function SignupForm() {
-  const [status, setStatus] = useState<"initial" | "loading" | "successful">();
+  const [status, setStatus] = useState<"initial" | "loading" | "success">();
   const [error, setError] = useState<string | null>(null);
   const form = useForm<SignupValues>({
     resolver: zodResolver(SignupSchema),
@@ -66,8 +73,10 @@ function SignupForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name *</FormLabel>
-                  <Input {...field} />
+                  <FormLabel htmlFor="name">Name *</FormLabel>
+                  <FormControl>
+                    <Input id="name" placeholder="jhone doe" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -77,8 +86,14 @@ function SignupForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email *</FormLabel>
-                  <Input {...field} />
+                  <FormLabel htmlFor="email">Email *</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="email"
+                      placeholder="something@gmail.com"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -88,8 +103,10 @@ function SignupForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password *</FormLabel>
-                  <Input {...field} />
+                  <FormLabel htmlFor="password">Password *</FormLabel>
+                  <FormControl>
+                    <Input id="password" placeholder="********" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -97,7 +114,7 @@ function SignupForm() {
             <div className="flex space-x-3">
               <Button
                 type="submit"
-                disabled={status === "loading" || status === "successful"}
+                disabled={status === "loading" || status === "success"}
               >
                 {/* {status ? "Signing up..." : "Sign Up"} */}
                 Sign Up

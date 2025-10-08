@@ -9,7 +9,14 @@ import { LoginSchema, LoginValues } from "@/lib/zodSchemas";
 import { Logo } from "../shared/Logo";
 import { AlertCircleIcon } from "lucide-react";
 import { Separator } from "../ui/separator";
-import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -23,7 +30,7 @@ import {
 import Link from "next/link";
 
 function LoginForm() {
-  const [status, setStatus] = useState<"initial" | "loading" | "successful">();
+  const [status, setStatus] = useState<"initial" | "loading" | "success">();
   const [error, setError] = useState<string | null>(null);
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
@@ -60,17 +67,20 @@ function LoginForm() {
         </div>
         <Separator />
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-2"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
             <FormField
               name="email"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email *</FormLabel>
-                  <Input {...field} />
+                  <FormLabel htmlFor="email">Email *</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="email"
+                      placeholder="something@gmail.com"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -80,8 +90,10 @@ function LoginForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password *</FormLabel>
-                  <Input {...field} />
+                  <FormLabel htmlFor="password">Password *</FormLabel>
+                  <FormControl>
+                    <Input id="password" placeholder="********" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -89,7 +101,7 @@ function LoginForm() {
             <div className="flex space-x-3">
               <Button
                 type="submit"
-                disabled={status === "loading" || status === "successful"}
+                disabled={status === "loading" || status === "success"}
               >
                 {/* {loading ? "Logging in..." : "Login"} */}
                 Login
