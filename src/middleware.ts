@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import appwriteSetup from "./lib/appwrite/appwrite.setup";
+import appwriteSetup from "./appwrite/appwrite.setup";
 
 export async function middleware(request: NextRequest) {
   // await appwriteSetup();

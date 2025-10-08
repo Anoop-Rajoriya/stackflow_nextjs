@@ -1,5 +1,5 @@
 import { Account, Client, ID, TablesDB, Storage, Query } from "appwrite";
-import { appwrite } from "../env";
+import { appwrite } from "../lib/env";
 
 export const client = new Client()
   .setEndpoint(appwrite.endpoint)

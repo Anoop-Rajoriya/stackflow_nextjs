@@ -10,7 +10,7 @@ import {
   RelationshipType,
   RelationMutate
 } from "node-appwrite";
-import { appwrite } from "../env";
+import { appwrite } from "../lib/env";
 
 export const client = new Client()
   .setEndpoint(appwrite.endpoint)
