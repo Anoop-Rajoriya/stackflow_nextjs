@@ -82,7 +82,15 @@ export const profileSchema = z.object({
   }),
 });
 
+export const commentSchema = z.object({
+  body: z
+    .string()
+    .min(3, "Comment must be at least 3 characters")
+    .max(50, "Comment is too long"),
+});
+
 export type SignupValues = z.infer<typeof SignupSchema>;
 export type LoginValues = z.infer<typeof LoginSchema>;
 export type PasswordValues = z.infer<typeof PasswordSchema>;
 export type ProfileValues = z.infer<typeof profileSchema>;
+export type CommentValues = z.infer<typeof commentSchema>;
