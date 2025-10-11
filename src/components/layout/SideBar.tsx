@@ -57,7 +57,7 @@ function SideBar({ className }: Props) {
 function SideBarContent({ className }: Props) {
   return (
     <aside className={cn("flex-col h-full", className)}>
-      <nav className="flex-1 p-2 space-y-1">
+      <nav className="flex-1 space-y-4">
         {navItems.map((nav, index) => (
           <NavItem key={index} href={nav.path} icon={nav.icon}>
             {nav.name}

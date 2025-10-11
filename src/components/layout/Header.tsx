@@ -1,9 +1,8 @@
 import React from "react";
 import { Logo } from "../shared/Logo";
 import { SideBar } from "./SideBar";
-import AuthButtons from "../features/AuthButtons";
-import LogoutButton from "../features/LogoutButton";
 import SearchInput from "../features/SearchInput";
+import { AuthButtons, LogoutButton } from "../features/AuthButtons";
 
 function Header() {
   return (
