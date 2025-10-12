@@ -89,8 +89,16 @@ export const commentSchema = z.object({
     .max(50, "Comment is too long"),
 });
 
+export const answerSchema = z.object({
+  body: z
+    .string()
+    .min(30, "Answer must be at least 30 characters")
+    .max(1000, "Answer is to long"),
+});
+
 export type SignupValues = z.infer<typeof SignupSchema>;
 export type LoginValues = z.infer<typeof LoginSchema>;
 export type PasswordValues = z.infer<typeof PasswordSchema>;
 export type ProfileValues = z.infer<typeof profileSchema>;
 export type CommentValues = z.infer<typeof commentSchema>;
+export type answerValues = z.infer<typeof answerSchema>;
