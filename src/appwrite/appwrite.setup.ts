@@ -1,8 +1,5 @@
 import { BUCKET, DB } from "./names";
 import { Permission, Role, storage, tablesdb } from "./server.config";
-import createAnswerTable from "./tables/answer";
-import createQuestionTable from "./tables/question";
-import createUserProfileTable from "./tables/userProfile";
 
 /* ---------------- Setup Helpers ---------------- */
 async function ensureDatabase() {
@@ -13,11 +10,7 @@ async function ensureDatabase() {
     await tablesdb.create({ databaseId: DB, name: DB });
 
     // Create required tables
-    await Promise.all([
-      createUserProfileTable(),
-      createQuestionTable(),
-      createAnswerTable(),
-    ]);
+    await Promise.all([]);
     console.log(`Database "${DB}" and tables created`);
   }
 }
