@@ -28,3 +28,7 @@
 - Add appwrite sdk setup
 - Add Initial Store (AuthSlice)
 
+### Decision
+
+- Start with Authenticaiton & Authorization
+- Add Signup, Login, Forgot-Password, RouteProtection feaures.
