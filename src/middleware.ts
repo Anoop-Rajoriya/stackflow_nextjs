@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import appwriteSetup from "./appwrite/appwrite.setup";
 
 export async function middleware(request: NextRequest) {
-  // await appwriteSetup();
+  await appwriteSetup();
 
   return NextResponse.next();
 }
