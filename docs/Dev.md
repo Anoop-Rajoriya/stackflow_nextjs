@@ -26,3 +26,5 @@
 
 - Add environment variables
 - Add appwrite sdk setup
+- Add Initial Store (AuthSlice)
+
