@@ -22,7 +22,7 @@
 
 ## 2025-10-14 - Baseic Setup
 
-### completed
+### Completed
 
 - Add environment variables
 - Add appwrite sdk setup
@@ -32,3 +32,7 @@
 
 - Start with Authenticaiton & Authorization
 - Add Signup, Login, Forgot-Password, RouteProtection feaures.
+
+## 2025-10-15 - Authenticaiton
+
+### Completed
