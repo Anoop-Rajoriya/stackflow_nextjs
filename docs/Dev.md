@@ -30,9 +30,24 @@
 
 ### Decision
 
-- Start with Authenticaiton & Authorization
-- Add Signup, Login, Forgot-Password, RouteProtection feaures.
+- Starting with Authenticaiton & Authorization
+- Adding Signup, Login, Forgot-Password, RouteProtection feaures.
 
 ## 2025-10-15 - Authenticaiton
 
 ### Completed
+
+- Add Signup and Login Auth Ui
+
+## 2025-10-16 - Authenticaiton
+
+### Completed
+
+- Add Signup with auto login
+- Add login
+- Add Password Recovery
+
+### Decision
+
+- Adding RouteProtection
+- Starting Q/A Features
