@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { refine } from "zod";
 
 /**
  * Password rules:
@@ -22,83 +22,28 @@ export const SignupSchema = z.object({
     ),
 });
 
+export type SignupValues = z.infer<typeof SignupSchema>;
+
 export const LoginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
-export const PasswordSchema = z
-  .object({
-    currentPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        passwordRegex,
-        "Password must contain uppercase, lowercase, number and special character"
-      ),
-
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        passwordRegex,
-        "Password must contain uppercase, lowercase, number and special character"
-      ),
-
-    confirmPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        passwordRegex,
-        "Password must contain uppercase, lowercase, number and special character"
-      ),
-  })
-  // Ensure newPassword and confirmPassword match
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
-  })
-  // Prevent using the same current password as new
-  .refine((data) => data.currentPassword !== data.newPassword, {
-    path: ["newPassword"],
-    message: "New password must be different from current password",
-  });
-
-export const profileSchema = z.object({
-  avatarUrl: z.file().optional().or(z.literal("")),
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name cannot exceed 50 characters"),
-
-  bio: z
-    .string()
-    .max(300, "Bio cannot exceed 300 characters")
-    .optional()
-    .or(z.literal("")),
-
-  theme: z.enum(["light", "dark"], {
-    error: () => ({ message: "Please select a theme" }),
-  }),
-});
-
-export const commentSchema = z.object({
-  body: z
-    .string()
-    .min(3, "Comment must be at least 3 characters")
-    .max(50, "Comment is too long"),
-});
-
-export const answerSchema = z.object({
-  body: z
-    .string()
-    .min(30, "Answer must be at least 30 characters")
-    .max(1000, "Answer is to long"),
-});
-
-export type SignupValues = z.infer<typeof SignupSchema>;
 export type LoginValues = z.infer<typeof LoginSchema>;
-export type PasswordValues = z.infer<typeof PasswordSchema>;
-export type ProfileValues = z.infer<typeof profileSchema>;
-export type CommentValues = z.infer<typeof commentSchema>;
-export type answerValues = z.infer<typeof answerSchema>;
+
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export type ForgotPasswordValues = z.infer<typeof ForgotPasswordSchema>;
+
+export const UpdatePasswordSchema = z
+  .object({
+    newPassword: z.string().min(1, "Password is required"),
+    confirmPassword: z.string().min(1, "Password is required"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    error: "Password do not match",
+    path: ["confirmPassword"],
+  });
+export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
