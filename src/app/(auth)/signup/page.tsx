@@ -28,12 +28,10 @@ import {
 
 import { AlertCircleIcon, CheckIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import useStore from "@/store";
+import { useRouter } from "next/navigation";
 
 function Signup() {
-  const [state, setState] = useState<"initial" | "loading" | "success">(
-    "initial"
-  );
-  const [error, setError] = useState<string | null>(null);
   const form = useForm<SignupValues>({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
@@ -42,8 +40,31 @@ function Signup() {
       password: "",
     },
   });
+  const router = useRouter();
+  const { signUp } = useStore();
 
-  function onSignup(values: SignupValues) {}
+  const [state, setState] = useState<"initial" | "loading" | "success">(
+    "initial"
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSignup(values: SignupValues) {
+    const { email, password, name } = values;
+    try {
+      setError(null);
+      setState("loading");
+      await signUp({ name, email, password });
+      setState("success");
+      router.push("/");
+    } catch (error) {
+      setState("initial");
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something wrong please try again"
+      );
+    }
+  }
 
   return (
     <div className="w-full max-w-sm flex flex-col gap-4 px-4 pt-6">
