@@ -1,4 +1,5 @@
 import Container from "@/components/layout/Container";
+import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import React from "react";
 
@@ -10,7 +11,8 @@ function MainLayout({ children }: Props) {
   return (
     <Container>
       <Header />
-      {children}
+      <div className="flex-1">{children}</div>
+      <Footer />
     </Container>
   );
 }

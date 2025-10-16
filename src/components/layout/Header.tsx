@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/shared/Logo";
 import {
   MenuIcon,
   UserPlusIcon,
@@ -20,9 +22,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
-import Logo from "@/components/shared/Logo";
-import { Separator } from "@/components/ui/separator";
+import { Spinner } from "../ui/spinner";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+
+import useStore from "@/store";
 
 type Props = {
   className?: string;
@@ -30,9 +35,8 @@ type Props = {
 
 export default function Header({ className }: Props) {
   const pathname = usePathname();
-
-  // ⚠️ Replace this with actual auth state
-  const isAuth = false;
+  const { isAuthenticated, _hasHydrated } = useStore();
+  const [sheetState, setSheetState] = useState(false);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -74,34 +78,40 @@ export default function Header({ className }: Props) {
         </nav>
 
         {/* ======= Desktop Auth Buttons ======= */}
-        <div className="hidden md:flex items-center gap-2">
-          {authLinks.map(
-            (link) =>
-              isAuth === link.auth && (
-                <AuthLink key={link.href} href={link.href} icon={link.icon}>
-                  {link.label}
-                </AuthLink>
-              )
-          )}
-          {isAuth && <Logout />}
+        <div className="hidden md:flex w-full max-w-48 items-center justify-center gap-2">
+          {_hasHydrated &&
+            authLinks.map(
+              (link) =>
+                isAuthenticated === link.auth && (
+                  <AuthLink key={link.href} href={link.href} icon={link.icon}>
+                    {link.label}
+                  </AuthLink>
+                )
+            )}
+          {_hasHydrated && isAuthenticated && <Logout />}
         </div>
 
         {/* ======= Mobile Nav & Auth ======= */}
         <div className="flex md:hidden items-center gap-2">
           {/* Login / Profile Icon */}
-          {isAuth ? (
-            <AuthLink href="/profile" icon={CircleUserIcon}>
-              Profile
-            </AuthLink>
-          ) : (
-            <AuthLink href="/login" icon={LogInIcon}>
-              Login
-            </AuthLink>
-          )}
+          {_hasHydrated &&
+            (isAuthenticated ? (
+              <AuthLink href="/profile" icon={CircleUserIcon}>
+                Profile
+              </AuthLink>
+            ) : (
+              <AuthLink href="/login" icon={LogInIcon}>
+                Login
+              </AuthLink>
+            ))}
           {/* Mobile Menu Sheet */}
-          <Sheet>
+          <Sheet open={sheetState} onOpenChange={setSheetState}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                onClick={() => setSheetState(true)}
+                variant="ghost"
+                size="icon"
+              >
                 <MenuIcon className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -117,6 +127,7 @@ export default function Header({ className }: Props) {
               <div className="flex flex-col gap-2 px-4">
                 {navLinks.map((link) => (
                   <NavLink
+                    onClick={() => setSheetState(false)}
                     key={link.href}
                     href={link.href}
                     className={cn(
@@ -133,19 +144,23 @@ export default function Header({ className }: Props) {
 
               {/* Mobile Auth Links */}
               <div className="flex justify-end gap-2 border-t py-3 px-4">
-                {authLinks.map(
-                  (link) =>
-                    isAuth === link.auth && (
-                      <AuthLink
-                        key={link.href}
-                        href={link.href}
-                        icon={link.icon}
-                      >
-                        {link.label}
-                      </AuthLink>
-                    )
+                {_hasHydrated &&
+                  authLinks.map(
+                    (link) =>
+                      isAuthenticated === link.auth && (
+                        <AuthLink
+                          key={link.href}
+                          href={link.href}
+                          icon={link.icon}
+                          onClick={() => setSheetState(false)}
+                        >
+                          {link.label}
+                        </AuthLink>
+                      )
+                  )}
+                {_hasHydrated && isAuthenticated && (
+                  <Logout onClick={() => setSheetState(false)} />
                 )}
-                {isAuth && <Logout />}
               </div>
             </SheetContent>
           </Sheet>
@@ -160,11 +175,12 @@ type NavLinkProps = {
   className?: string;
   href: string;
   children: React.ReactNode;
+  onClick?: () => void;
 };
 
-function NavLink({ href, className, children }: NavLinkProps) {
+function NavLink({ href, className, children, onClick }: NavLinkProps) {
   return (
-    <Link href={href} className={cn("", className)}>
+    <Link onClick={onClick} href={href} className={cn("", className)}>
       {children}
     </Link>
   );
@@ -176,6 +192,7 @@ function AuthLink({
   className,
   children,
   icon: Icon,
+  onClick,
 }: NavLinkProps & { icon: LucideIcon }) {
   const router = useRouter();
 
@@ -184,6 +201,7 @@ function AuthLink({
       variant="outline"
       onClick={() => {
         router.push(href);
+        onClick?.();
       }}
       className={cn("gap-1", className)}
     >
@@ -193,18 +211,53 @@ function AuthLink({
   );
 }
 
-function Logout({ className }: { className?: string }) {
+/* ======= Logout Button ======= */
+function Logout({
+  className,
+  onClick,
+}: {
+  className?: string;
+  onClick?: () => void;
+}) {
   const router = useRouter();
-  const onLogout = async () => {};
+  const { logout } = useStore();
+  const [loading, setLoading] = useState(false);
+  const onLogout = async () => {
+    try {
+      setLoading(true);
+      await logout();
+      router.push("/");
+    } catch (error) {
+      toast.error("Logging out failed", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+      onClick?.();
+    }
+  };
 
   return (
-    <Button
-      onClick={onLogout}
-      variant={"destructive"}
-      className={cn("gap-1", className)}
-    >
-      <LogOutIcon className="h-4 w-4" />
-      Logout
-    </Button>
+    <>
+      <Button
+        onClick={onLogout}
+        variant={"destructive"}
+        className={cn("gap-1", className)}
+        disabled={loading}
+      >
+        {loading ? (
+          <Spinner className="h-4 w-4" />
+        ) : (
+          <LogOutIcon className="h-4 w-4" />
+        )}
+        Logout
+      </Button>
+    </>
   );
 }

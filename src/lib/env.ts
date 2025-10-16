@@ -5,5 +5,5 @@ export const appwrite = {
 };
 
 export const app = {
-  demain: process.env.NEXT_PUBLIC_APP_DOMAIN!
+  domain: process.env.NEXT_PUBLIC_APP_DOMAIN!
 }

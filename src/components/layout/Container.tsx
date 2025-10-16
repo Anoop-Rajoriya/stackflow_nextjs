@@ -10,7 +10,7 @@ function Container({ children, className }: Props) {
   return (
     <main
       className={cn(
-        "container flex flex-col gap-2 mx-auto",
+        "container min-h-screen flex flex-col gap-2 mx-auto",
         className
       )}
     >
