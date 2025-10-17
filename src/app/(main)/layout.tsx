@@ -11,7 +11,7 @@ function MainLayout({ children }: Props) {
   return (
     <Container>
       <Header />
-      <div className="flex-1">{children}</div>
+      {children}
       <Footer />
     </Container>
   );

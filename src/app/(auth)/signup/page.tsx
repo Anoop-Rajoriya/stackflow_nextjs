@@ -30,6 +30,7 @@ import { AlertCircleIcon, CheckIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import useStore from "@/store";
 import { useRouter } from "next/navigation";
+import { PublicOnlyRoute } from "@/components/shared/RouteProvider";
 
 function Signup() {
   const form = useForm<SignupValues>({
@@ -170,4 +171,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default PublicOnlyRoute(Signup);

@@ -35,6 +35,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { PublicOnlyRoute } from "@/components/shared/RouteProvider";
 
 type FormState = "initial" | "loading" | "success";
 
@@ -280,4 +281,4 @@ function ForgotPassword() {
   );
 }
 
-export default ForgotPassword;
+export default PublicOnlyRoute(ForgotPassword);

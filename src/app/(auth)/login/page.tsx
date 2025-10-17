@@ -30,6 +30,7 @@ import { AlertCircleIcon, CheckIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import useStore from "@/store";
+import { PublicOnlyRoute } from "@/components/shared/RouteProvider";
 
 function Login() {
   const form = useForm<LoginValues>({
@@ -167,4 +168,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default PublicOnlyRoute(Login);
