@@ -3,16 +3,6 @@ import { account, tablesdb, ID, Query } from "@/appwrite/client.config";
 import { StateCreator } from "zustand";
 import { DB, PROFILE } from "@/appwrite/names";
 
-type Profile = {
-  id: string;
-  name: string;
-  email: string;
-  about: string | null;
-  avatar: string | null;
-  reputation: number;
-  joinedAt: string;
-};
-
 type SignupProps = {
   name: string;
   email: string;
@@ -33,10 +23,26 @@ type ConfirmPasswordRecoveryProps = {
   password: string;
 };
 
+type Profile = {
+  id: string;
+  name: string;
+  email: string;
+  about: string | null;
+  avatar: string | null;
+  reputation: number;
+  joinedAt: string;
+};
+
+type Jwt = {
+  token: string | null;
+  expiry: number;
+};
+
 type AuthSlice = {
   user: Models.User | null;
   profile: Profile | null;
   isAuthenticated: boolean;
+  jwt: Jwt;
   _hasHydrated: boolean;
   login: (value: LoginProps) => Promise<void>;
   signUp: (value: SignupProps) => Promise<void>;
@@ -45,12 +51,14 @@ type AuthSlice = {
   ConfirmPasswordRecovery: (
     value: ConfirmPasswordRecoveryProps
   ) => Promise<void>;
+  getValidJWT: () => Promise<string>;
 };
 
-const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
+const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
   user: null,
   profile: null,
   isAuthenticated: false,
+  jwt: { token: null, expiry: 0 },
   _hasHydrated: false,
 
   signUp: async ({ name, email, password }) => {
@@ -126,6 +134,7 @@ const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       user: null,
       profile: null,
       isAuthenticated: false,
+      jwt: { token: null, expiry: 0 },
     });
   },
   sendPasswordRecovery: async ({ email, url }) => {
@@ -140,6 +149,19 @@ const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       secret,
       password,
     });
+  },
+  getValidJWT: async () => {
+    const { token, expiry } = get().jwt;
+    const now = Math.floor(Date.now() / 1000);
+
+    if (token && now < expiry - 30) {
+      return token;
+    }
+
+    const { jwt } = await account.createJWT();
+    const decode = JSON.parse(atob(jwt.split(".")[1]));
+    set({ jwt: { token: jwt, expiry: decode.exp } });
+    return jwt;
   },
 });
 
