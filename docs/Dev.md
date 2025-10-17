@@ -51,3 +51,9 @@
 
 - Adding RouteProtection
 - Starting Q/A Features
+
+## 2025-10-17 - Q/A System
+
+### Completed
+
+- Add public and user only client side route protection.
