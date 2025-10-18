@@ -36,7 +36,7 @@ export default async function createQuestion() {
 
   // 2️⃣ Define columns for the QUESTION table
   await Promise.all([
-    // title
+    // title required
     tablesdb.createStringColumn({
       databaseId: DB,
       tableId: QUESTION,
@@ -45,7 +45,7 @@ export default async function createQuestion() {
       required: true,
     }),
 
-    // body
+    // body required
     tablesdb.createStringColumn({
       databaseId: DB,
       tableId: QUESTION,
@@ -54,23 +54,23 @@ export default async function createQuestion() {
       required: true,
     }),
 
-    // tags (array of strings)
+    // tags (array of strings) required
     tablesdb.createStringColumn({
       databaseId: DB,
       tableId: QUESTION,
       key: "tags",
       size: 50, // max length per tag
-      required: false,
+      required: true,
       array: true,
     }),
 
-    // author (relation to PROFILE table)
+    // author (relation to PROFILE table) required
     tablesdb.createRelationshipColumn({
       databaseId: DB,
       tableId: QUESTION,
       key: "author",
       relatedTableId: PROFILE, // must match your PROFILE table ID
-      type: RelationshipType.OneToOne,
+      type: RelationshipType.ManyToOne,
       onDelete: RelationMutate.Cascade,
     }),
 

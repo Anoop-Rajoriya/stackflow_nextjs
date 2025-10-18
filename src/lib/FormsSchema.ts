@@ -46,4 +46,36 @@ export const UpdatePasswordSchema = z
     error: "Password do not match",
     path: ["confirmPassword"],
   });
+
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
+
+export const AskQuestionSchema = z.object({
+  title: z
+    .string()
+    .min(15, "Title must be at least 15 characters long")
+    .max(100, "Title must be at most 100 characters long")
+    .trim(),
+
+  body: z
+    .string()
+    .min(30, "Body must be at least 30 characters long. Provide more details.")
+    .max(3000, "Body cannot exceed 3000 characters")
+    .trim(),
+
+  tags: z
+    .array(
+      z
+        .string()
+        .min(1, "Tag cannot be empty")
+        .max(20, "Each tag must be at most 20 characters")
+        .regex(
+          /^[a-zA-Z0-9-]+$/,
+          "Tags can only contain letters, numbers, and hyphens"
+        )
+        .trim()
+    )
+    .min(1, "At least one tag is required")
+    .max(5, "You can add up to 5 tags only"),
+});
+
+export type AskQuestionValues = z.infer<typeof AskQuestionSchema>;

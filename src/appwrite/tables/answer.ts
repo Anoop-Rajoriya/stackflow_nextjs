@@ -38,7 +38,7 @@ export default async function createAnswer() {
       tableId: ANSWER,
       key: "author",
       relatedTableId: PROFILE,
-      type: RelationshipType.OneToOne,
+      type: RelationshipType.ManyToOne,
       onDelete: RelationMutate.Cascade,
     }),
 

@@ -153,7 +153,6 @@ const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
   getValidJWT: async () => {
     const { token, expiry } = get().jwt;
     const now = Math.floor(Date.now() / 1000);
-
     if (token && now < expiry - 30) {
       return token;
     }

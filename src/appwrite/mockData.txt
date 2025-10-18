@@ -1,0 +1,95 @@
+***************************** User 1 ********************************
+
+name: "Elias Vance", 
+email: "elias.vance@examplecorp.net"
+password: "Elias@1234"
+
+************************** Posts Questions **************************
+
+Question Post 1:
+
+title: "Performance issue with deeply nested React context and re-renders"
+tags: "react", "performance", "context", "useMemo"
+body: "## Problem Description\n\nI'm using `React.createContext` for global state management. The context value is an object with multiple properties:
+
+```jsx
+const value = useMemo(() => ({
+user: currentUser,
+  settings: appSettings, // This updates frequently\n  staticData: initialData,
+}), [currentUser, appSettings]);
+```
+
+When `appSettings` changes, components only consuming `staticData` still re-render. How can I structure this to prevent unnecessary re-renders without splitting the context into dozens of smaller contexts?
+
+I've already tried wrapping consumers in `React.memo` but it didn't completely solve the issue.
+
+```jsx
+// Example of a consumer
+const StaticComponent = React.memo(({ data }) => {/* ... */});
+```
+**Any insights on optimization patterns for large context graphs are appreciated.**"
+
+*********************************************************************
+
+Question Post 2:
+
+title: "How to handle file uploads securely from a React client to an Express server?"
+tags: "react", "express", "fileupload", "security"
+body: "**Goal:** Securely upload files (up to 10MB) from a React front-end.
+
+1. **Direct-to-S3:**
+   - ✅ Pros: Reduces load on Express server.
+   - ❌ Cons: Requires managing CORS/S3 policies.
+
+
+2. **Express Proxy:**
+   - ✅ Pros: Centralized control.
+   - ❌ Cons: Express server can get bottlenecked.
+
+What is the recommended approach for a scalable full-stack application? Are there any specific middleware libraries (like `multer` or `express-fileupload`) that handle this better with error validation?"
+
+*************************************************************
+
+Question Post 3:
+
+title: "Best way to integrate a React application into a legacy jQuery/ASP.NET page"
+tags: "react", "integration", "legacy-code", "micro-frontend"
+body: "I've tried using `ReactDOM.createRoot(container).render(<App />)` but the existing jQuery scripts keep modifying the surrounding DOM, causing React to throw warnings about unexpected changes.
+
+**Is there a recommended pattern (like a micro-frontend approach) to isolate the React component's DOM management from the host page's scripts?**
+
+Specifically, what is the best practice for passing initial configuration props from the host page's server-rendered script tag to the mounted React component?
+
+```html
+<div id=\"react-root\"></div>
+<script>
+  const initialProps = { userId: 123, featureFlag: true };
+  // How do I pass initialProps securely to my React component?
+</script>
+```"
+
+***********************************************************
+
+***************************** User 2 ********************************
+
+name: "Seraphina Chen", 
+email: "seraphina.chen@examplecorp.net"
+password: "Seraphina@1234"
+
+***********************************************************
+
+***************************** User 3 ********************************
+
+name: "Marcus Holloway", 
+email: "marcus.holloway@examplecorp.net"
+password: "Marcus@1234"
+
+***********************************************************
+
+***************************** User 4 ********************************
+
+name: "Chloe Rivera", 
+email: "chloe.rivera@examplecorp.net"
+password: "Chloe@1234"
+
+***********************************************************

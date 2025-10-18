@@ -36,7 +36,7 @@ export default async function createVote() {
       databaseId: DB,
       tableId: VOTE,
       key: "author",
-      type: RelationshipType.OneToOne,
+      type: RelationshipType.ManyToOne,
       relatedTableId: PROFILE, // must match PROFILE table ID
       onDelete: RelationMutate.Cascade,
     }),

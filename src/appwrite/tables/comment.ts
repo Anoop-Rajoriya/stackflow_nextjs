@@ -36,7 +36,7 @@ export default async function createComment() {
       databaseId: DB,
       tableId: COMMENT,
       key: "author",
-      type: RelationshipType.OneToOne,
+      type: RelationshipType.ManyToOne,
       relatedTableId: PROFILE, // must match your PROFILE table ID
       onDelete: RelationMutate.Cascade,
     }),

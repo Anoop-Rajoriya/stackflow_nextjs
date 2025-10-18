@@ -41,6 +41,7 @@ export default function Header({ className }: Props) {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/questions", label: "Questions" },
+    { href: "/questions/ask", label: "Ask Question" },
   ];
 
   const authLinks = [
