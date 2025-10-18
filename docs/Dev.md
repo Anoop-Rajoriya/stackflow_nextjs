@@ -57,3 +57,10 @@
 ### Completed
 
 - Add public and user only client side route protection.
+
+## 2025-10-18 - Q/A System
+
+### Completed
+
+- Add `/api/questions` post method to ask quesiton.
+- Add `/api/quesitons` get method to list initial quesitons.
