@@ -1,3 +1,5 @@
+// GET: list all questions, POST: create question
+
 import { NextRequest, NextResponse } from "next/server";
 import { ID, Permission, Query, Role } from "node-appwrite";
 import { DB, PROFILE, QUESTION } from "@/appwrite/names";
