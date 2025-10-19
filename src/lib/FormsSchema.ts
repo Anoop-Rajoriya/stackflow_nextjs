@@ -1,4 +1,4 @@
-import z, { refine } from "zod";
+import z, { refine, string } from "zod";
 
 /**
  * Password rules:
@@ -79,3 +79,21 @@ export const AskQuestionSchema = z.object({
 });
 
 export type AskQuestionValues = z.infer<typeof AskQuestionSchema>;
+
+export const AnswerSchema = z.object({
+  body: z
+    .string()
+    .min(30, "Body must be at least 30 characters long. Provide more details.")
+    .max(3000, "Body cannot exceed 10,000 characters")
+    .trim(),
+});
+export type AnswerValues = z.infer<typeof AnswerSchema>;
+
+export const CommentSchema = z.object({
+  body: z
+    .string()
+    .min(30, "Body must be at least 30 characters long. Provide more details.")
+    .max(3000, "Body cannot exceed 100 characters")
+    .trim(),
+});
+export type CommentValues = z.infer<typeof CommentSchema>;
