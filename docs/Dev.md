@@ -62,5 +62,12 @@
 
 ### Completed
 
-- Add `/api/questions` post method to ask quesiton.
-- Add `/api/quesitons` get method to list initial quesitons.
+- Add `/api/questions` post method to create question.
+- Add `/api/quesitons` get method to list quesitons.
+
+## 2025-10-19 - Q/A System
+
+### Completed
+
+- Add Quesiton Details page Ui
+- Add api routes for questions, answers, comment, voting, and profile
