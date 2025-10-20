@@ -3,7 +3,7 @@ import { DB, PROFILE } from "../names";
 
 /**
  * {
- * user, r
+ * userId, r
  * name, r
  * email, r
  * avatar,
@@ -34,7 +34,7 @@ export default async function createProfile() {
     tablesdb.createStringColumn({
       databaseId: DB,
       tableId: PROFILE,
-      key: "user",
+      key: "userId",
       size: 50,
       required: true,
     }),

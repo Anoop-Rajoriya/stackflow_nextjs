@@ -15,6 +15,8 @@ import {
  * tags,   r
  * views,
  * votes,
+ * answers,
+ * comments
  * }
  */
 
@@ -86,6 +88,23 @@ export default async function createQuestion() {
       databaseId: DB,
       tableId: QUESTION,
       key: "votes",
+      required: false,
+      xdefault: 0,
+    }),
+
+    // answers
+    tablesdb.createIntegerColumn({
+      databaseId: DB,
+      tableId: QUESTION,
+      key: "answers",
+      required: false,
+      xdefault: 0,
+    }),
+    // comments
+    tablesdb.createIntegerColumn({
+      databaseId: DB,
+      tableId: QUESTION,
+      key: "comments",
       required: false,
       xdefault: 0,
     }),

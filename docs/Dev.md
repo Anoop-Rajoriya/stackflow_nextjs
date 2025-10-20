@@ -71,3 +71,10 @@
 
 - Add Quesiton Details page Ui
 - Add api routes for questions, answers, comment, voting, and profile
+
+## 2025-10-20 - Q/A System
+
+### Completed
+
+- Update appwrite tables
+- update api

@@ -1,4 +1,4 @@
-import { DB, ANSWER, VOTE, COMMENT, PROFILE } from "../names";
+import { DB, ANSWER, PROFILE, QUESTION } from "../names";
 import {
   Permission,
   RelationMutate,
@@ -11,6 +11,7 @@ import {
  * {
  * body,    r
  * author,  r
+ * quesiton, r
  * votes,
  * isAccepted,
  * }
@@ -49,6 +50,15 @@ export default async function createAnswer() {
       key: "body",
       size: 10000,
       required: true,
+    }),
+
+    // question
+    tablesdb.createRelationshipColumn({
+      databaseId: DB,
+      tableId: ANSWER,
+      relatedTableId: QUESTION,
+      type: RelationshipType.ManyToOne,
+      key: "question",
     }),
 
     // isAccepted — whether this is the accepted answer
