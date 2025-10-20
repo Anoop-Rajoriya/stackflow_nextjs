@@ -1,16 +1,3 @@
-// {
-//   "id": "q101",
-//   "title": "How to debounce an input in React?",
-//   "body": "I'm trying to debounce a search input to avoid API spam.\n\nHere's my code:\n\n```jsx\nconst handleChange = (e) => {\n  setQuery(e.target.value);\n};\n```\n\nHow can I add debounce to this?",
-//   "tags": ["react", "javascript", "frontend"],
-//   "author": {"profileTable"},
-//   "answers": [{answerTable}],
-//   "comments": [{"commentTable"}],
-//   "votes": [{"voteTable"}],
-//   "views": 230,
-//   "isResolved": false
-// }
-
 import { ANSWER, COMMENT, DB, PROFILE, QUESTION, VOTE } from "../names";
 import {
   Permission,
@@ -19,6 +6,17 @@ import {
   Role,
   tablesdb,
 } from "../server.config";
+
+/**
+ * {
+ * title,  r
+ * body,   r
+ * author, r
+ * tags,   r
+ * views,
+ * votes,
+ * }
+ */
 
 export default async function createQuestion() {
   // 1️⃣ Create the QUESTION table
@@ -74,36 +72,6 @@ export default async function createQuestion() {
       onDelete: RelationMutate.Cascade,
     }),
 
-    // answers (relation to ANSWER table — one-to-many)
-    tablesdb.createRelationshipColumn({
-      databaseId: DB,
-      tableId: QUESTION,
-      key: "answers",
-      relatedTableId: ANSWER,
-      type: RelationshipType.OneToMany,
-      onDelete: RelationMutate.Cascade,
-    }),
-
-    // comments (relation to COMMENT table — one-to-many)
-    tablesdb.createRelationshipColumn({
-      databaseId: DB,
-      tableId: QUESTION,
-      key: "comments",
-      relatedTableId: COMMENT,
-      type: RelationshipType.OneToMany,
-      onDelete: RelationMutate.Cascade,
-    }),
-
-    // votes (relation to VOTE table — one-to-many)
-    tablesdb.createRelationshipColumn({
-      databaseId: DB,
-      tableId: QUESTION,
-      key: "votes",
-      relatedTableId: VOTE,
-      type: RelationshipType.OneToMany,
-      onDelete: RelationMutate.Cascade,
-    }),
-
     // views
     tablesdb.createIntegerColumn({
       databaseId: DB,
@@ -113,13 +81,13 @@ export default async function createQuestion() {
       xdefault: 0,
     }),
 
-    // isResolved
-    tablesdb.createBooleanColumn({
+    // votes
+    tablesdb.createIntegerColumn({
       databaseId: DB,
       tableId: QUESTION,
-      key: "isResolved",
+      key: "votes",
       required: false,
-      xdefault: false,
+      xdefault: 0,
     }),
   ]);
 }

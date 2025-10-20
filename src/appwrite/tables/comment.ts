@@ -1,11 +1,3 @@
-// {
-//   "id": "cmt_01",
-//   "author": {ProfileTable},
-//   "targetType": "question",   // or "answer"
-//   "targetId": "targetId",
-//   "body": "You should also check out React Query!",
-// }
-
 import { DB, COMMENT, PROFILE } from "../names";
 import {
   Permission,
@@ -14,6 +6,15 @@ import {
   Role,
   tablesdb,
 } from "../server.config";
+
+/**
+ * {
+ * targetType, r
+ * targetId,   r
+ * body,       r
+ * author      r
+ * }
+ */
 
 export default async function createComment() {
   // 1️⃣ Create the COMMENT table

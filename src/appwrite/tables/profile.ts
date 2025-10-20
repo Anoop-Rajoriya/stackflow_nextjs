@@ -1,20 +1,18 @@
-// {
-// "userId": "usr_01",
-// "name": "Anoop Rajoriya",
-// "email": "anoop@example.com",
-// "avatar": "https://api.dicebear.com/8.x/identicon/svg?seed=anoop",
-// "about": "Full-stack dev passionate about React and Node.js.",
-// "reputation": 1520,
-//  "badges": {
-//  "gold": 3,
-//  "silver": 8,
-//  "bronze": 15
-//  },
-//  "joinedAt": "2024-05-14T10:12:00Z"
-//  }
-
 import { tablesdb, Permission, Role } from "../server.config";
 import { DB, PROFILE } from "../names";
+
+/**
+ * {
+ * user, r
+ * name, r
+ * email, r
+ * avatar,
+ * about,
+ * reputation,
+ * rank, bronze, silver, gold
+ *
+ * }
+ */
 
 export default async function createProfile() {
   // 1 Create the table
@@ -36,7 +34,7 @@ export default async function createProfile() {
     tablesdb.createStringColumn({
       databaseId: DB,
       tableId: PROFILE,
-      key: "userId",
+      key: "user",
       size: 50,
       required: true,
     }),
@@ -86,21 +84,14 @@ export default async function createProfile() {
       xdefault: 1,
     }),
 
-    // badges (gold, silver, bronze) — store as object (JSON)
-    // tablesdb.createJsonColumn({
-    //   databaseId: DB,
-    //   tableId: PROFILE,
-    //   key: "badges",
-    //   required: true,
-    //   default: JSON.stringify({ gold: 0, silver: 0, bronze: 0 }),
-    // }),
-
-    // joinedAt
-    tablesdb.createDatetimeColumn({
+    // rank
+    tablesdb.createEnumColumn({
       databaseId: DB,
       tableId: PROFILE,
-      key: "joinedAt",
-      required: true,
+      key: "rank",
+      elements: ["bronze", "silver", "gold"],
+      required: false,
+      xdefault: "bronze",
     }),
   ]);
 }

@@ -1,12 +1,3 @@
-// {
-//   "id": "ans_01",
-//   "author": {"profile"},
-//   "body": "You can use `lodash.debounce`:\n\n```jsx\nimport debounce from 'lodash.debounce';\n\nconst handleChange = debounce((e) => {\n  setQuery(e.target.value);\n}, 300);\n```\n\nThis will delay the API calls by 300ms.",
-//   "votes": [{VoteTable}],
-//   "comments": [{commentTable}],
-//   "isAccepted": true
-// }
-
 import { DB, ANSWER, VOTE, COMMENT, PROFILE } from "../names";
 import {
   Permission,
@@ -15,6 +6,15 @@ import {
   Role,
   tablesdb,
 } from "../server.config";
+
+/**
+ * {
+ * body,    r
+ * author,  r
+ * votes,
+ * isAccepted,
+ * }
+ */
 
 export default async function createAnswer() {
   // 1️⃣ Create the ANSWER table
@@ -51,26 +51,6 @@ export default async function createAnswer() {
       required: true,
     }),
 
-    // votes — integer (upvotes - downvotes)
-    tablesdb.createRelationshipColumn({
-      databaseId: DB,
-      tableId: ANSWER,
-      relatedTableId: VOTE,
-      type: RelationshipType.OneToMany,
-      key: "votes",
-      onDelete: RelationMutate.Cascade,
-    }),
-
-    // comments — number of comments on this answer
-    tablesdb.createRelationshipColumn({
-      databaseId: DB,
-      tableId: ANSWER,
-      relatedTableId: COMMENT,
-      type: RelationshipType.OneToMany,
-      key: "comments",
-      onDelete: RelationMutate.Cascade,
-    }),
-
     // isAccepted — whether this is the accepted answer
     tablesdb.createBooleanColumn({
       databaseId: DB,
@@ -78,6 +58,14 @@ export default async function createAnswer() {
       key: "isAccepted",
       required: false,
       xdefault: false,
+    }),
+    // votes
+    tablesdb.createIntegerColumn({
+      databaseId: DB,
+      tableId: ANSWER,
+      key: "votes",
+      required: false,
+      xdefault: 0,
     }),
   ]);
 }
