@@ -78,7 +78,6 @@ const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
       userId: user.$id,
       name: user.name,
       email: user.email,
-      joinedAt: user.$createdAt,
     };
 
     const profile = await tablesdb.createRow({
@@ -97,7 +96,7 @@ const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
         about: profile.about ?? null,
         avatar: profile.avatar ?? null,
         reputation: profile.reputation,
-        joinedAt: profile.joinedAt,
+        joinedAt: profile.$createdAt,
       },
       isAuthenticated: true,
     });
@@ -123,7 +122,7 @@ const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
         avatar: profileData.avatar || null,
         about: profileData.about || null,
         reputation: profileData.reputation,
-        joinedAt: profileData.joinedAt,
+        joinedAt: profileData.$createdAt,
       },
       isAuthenticated: true,
     });
