@@ -78,3 +78,10 @@
 
 - Update appwrite tables
 - update api
+
+## 2025-10-22 - Q/A System
+
+## Completed
+
+- Add asking quesiton
+- Add answring
