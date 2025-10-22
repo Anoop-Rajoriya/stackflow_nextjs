@@ -1,12 +1,12 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import api from "@/lib/axios";
 import QuestionCard from "@/components/feature/QuestionCard";
 import { Spinner } from "@/components/ui/spinner";
-import api from "@/lib/axios";
-import React, { useEffect, useState } from "react";
 
 type Question = {
-  id: string;
+  $id: string;
   title: string;
   body: string;
   tags: string[];
@@ -18,7 +18,7 @@ type Question = {
     name: string;
     reputation: number;
   };
-  createdAt: string;
+  $createdAt: string;
 };
 
 function Questions() {
@@ -36,10 +36,9 @@ function Questions() {
       setState({ error: null, loading: true });
       try {
         const res = await api.get("/questions");
-        const data = res.data;
-
-        if (Array.isArray(data.questions) && data.questions.length > 0) {
-          setQuestions(data.questions);
+        const questionList = res.data.questions;
+        if (Array.isArray(questionList) && questionList.length > 0) {
+          setQuestions(questionList);
         } else {
           setQuestions(null);
         }
@@ -70,8 +69,8 @@ function Questions() {
       ) : questions?.length ? (
         questions.map((q) => (
           <QuestionCard
-            key={q.id}
-            id={q.id}
+            key={q.$id}
+            id={q.$id}
             title={q.title}
             body={q.body}
             tags={q.tags}
@@ -80,7 +79,7 @@ function Questions() {
             views={q.views}
             comments={q.comments}
             author={q.author}
-            createdAt={q.createdAt}
+            createdAt={q.$createdAt}
           />
         ))
       ) : (

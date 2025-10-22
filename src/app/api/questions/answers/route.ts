@@ -1,1 +1,0 @@
-// GET: list all answers for a question, POST: create answer

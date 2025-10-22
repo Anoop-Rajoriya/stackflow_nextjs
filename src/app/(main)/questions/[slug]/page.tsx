@@ -3,142 +3,157 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import MDEditor from "@uiw/react-md-editor";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowBigUp, ArrowBigDown } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 import AnswerForm from "@/components/feature/AnswerForm";
+import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Vote from "@/components/feature/Vote";
+import api from "@/lib/axios";
 import CommentBlock from "@/components/feature/Comment";
-import { nanoid } from "nanoid";
-
-// 🧠 Mock data (replace with server data fetching)
-const mockQuestion = {
-  id: "q101",
-  title: "How to debounce input in React efficiently?",
-  body: `I want to debounce user input in a search bar to prevent too many API calls. I've tried \`setTimeout\` and \`useEffect\`, but it's not working as expected.`,
-  author: { id: "a1", name: "Anoop Rajoriya", reputation: 1540, avatar: null },
-  createdAt: "2025-10-18T10:30:00Z",
-  updatedAt: "2025-10-19T09:00:00Z",
-  votes: 12,
-  views: 50,
-  tags: ["react", "javascript", "debounce", "hooks"],
-  comments: [
-    {
-      id: "c1",
-      author: "Jane",
-      body: "Have you tried lodash.debounce?",
-      createdAt: "2025-10-18T12:00:00Z",
-    },
-    {
-      id: "c2",
-      author: "John",
-      body: "Show your code sample!",
-      createdAt: "2025-10-18T12:30:00Z",
-    },
-  ],
-  answers: [
-    {
-      id: "a1",
-      body: `You can use \`useCallback\` with lodash.debounce to handle this cleanly.`,
-      author: { id: "a2", name: "Jane Doe", reputation: 980, avatar: null },
-      createdAt: "2025-10-18T11:00:00Z",
-      updatedAt: "2025-10-18T11:30:00Z",
-      votes: 5,
-      comments: [
-        {
-          id: "ac1",
-          author: "User1",
-          body: "This worked for me too!",
-          createdAt: "2025-10-18T12:45:00Z",
-        },
-      ],
-    },
-  ],
-};
 
 type Author = {
-  id: string;
+  $id: string;
   name: string;
   avatar: string | null;
   reputation: number;
 };
 
-type Comment = {
-  id: string;
-  body: string;
-  author: string;
-  createdAt: string;
-};
-
 type Answer = {
-  id: string;
+  $id: string;
   body: string;
   author: Author;
   votes: number;
-  comments: Comment[];
-  createdAt: string;
-  updatedAt: string;
+  $createdAt: string;
+  $updatedAt: string;
 };
 
 type Question = {
-  id: string;
+  $id: string;
   title: string;
   body: string;
   tags: string[];
   votes: number;
   views: number;
   author: Author;
-  comments: Comment[];
-  answers: Answer[];
-  createdAt: string;
-  updatedAt: string;
+  $createdAt: string;
+  $updatedAt: string;
 };
+
+function formatDate(d: string | Date) {
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 
 export default function QuestionDetailPage() {
   const { slug } = useParams();
-  const [question, setQuestion] = useState<Question | null>(mockQuestion);
-  const [states, setStates] = useState<{
-    error: string | null;
-    loading: boolean;
-  }>({
-    error: null,
-    loading: false,
-  });
 
-  useEffect(() => {}, []);
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [questionError, setQuestionError] = useState<string | null>(null);
+  const [answerError, setAnswerError] = useState<string | null>(null);
+
+  const fetchQuestion = async () => {
+    setLoading(true);
+    setQuestionError(null);
+    try {
+      const qRes = await api.get(`/questions/${slug}`);
+      setQuestion(qRes.data.question);
+    } catch (err) {
+      console.error("Question fetch error:", err);
+      setQuestionError(
+        err instanceof Error ? err.message : "Failed to load question"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchAnswers = async () => {
+    setLoading(true);
+    setAnswerError(null);
+    try {
+      const aRes = await api.get(`/questions/${slug}/answers`);
+      setAnswers(aRes.data.answers);
+    } catch (err) {
+      console.error("Question fetch error:", err);
+      setQuestionError(
+        err instanceof Error ? err.message : "Failed to load question"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+    fetchAnswers();
+  }, [slug]);
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="flex-1 flex justify-center items-center py-16">
+        <Spinner className="size-10" />
+      </div>
+    );
+  }
+
+  // Error
+  if (questionError) {
+    return (
+      <div className=" flex-1 px-4 py-10">
+        <Alert variant="destructive">
+          <AlertCircleIcon className="h-4 w-4" />
+          <AlertDescription>{questionError}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Not Found
+  if (!question) {
+    return (
+      <div className="flex-1 text-center text-muted-foreground py-16">
+        Question not found.
+      </div>
+    );
+  }
 
   return (
-    <div className="container max-w-5xl mx-auto p-4 space-y-10">
-      {/*  Question Section */}
-      <section className="space-y-4">
+    <div className="flex-1 space-y-8 px-4 py-6">
+      {/* QUESTION BLOCK */}
+      <div className="space-y-4">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold">{mockQuestion.title}</h1>
-          <div className="text-sm text-muted-foreground flex gap-2">
-            <p>Asked: {new Date(mockQuestion.createdAt).toLocaleString()}</p>
-            <p>Updated: {new Date(mockQuestion.updatedAt).toLocaleString()}</p>
+          <h1 className="text-3xl font-bold leading-tight">{question.title}</h1>
+          <div className="text-sm text-muted-foreground flex flex-wrap gap-3">
+            <p>Asked: {formatDate(question.$createdAt)}</p>
+            <p>Updated: {formatDate(question.$updatedAt)}</p>
+            <p>Views: {question.views}</p>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-6">
-          {/* Votes */}
-          <div className="flex sm:flex-col items-center gap-2 sm:gap-0">
-            <Button size="icon" variant="ghost">
-              <ArrowBigUp className="h-6 w-6" />
-            </Button>
-            <span className="font-semibold">{mockQuestion.votes}</span>
-            <Button size="icon" variant="ghost">
-              <ArrowBigDown className="h-6 w-6" />
-            </Button>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="sm:w-16 flex sm:flex-col items-center gap-2">
+            <Vote targetId={question.$id} votes={question.votes} />
           </div>
 
-          {/* Body & Meta */}
           <div className="flex-1 space-y-4">
-            <div className="prose max-w-none">
-              <MDEditor.Markdown source={mockQuestion.body} />
+            <div className="rounded-md border p-4 bg-card">
+              <MDEditor.Markdown
+                source={question.body}
+                className="[&_code]:bg-muted-foreground/10 prose"
+              />
             </div>
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="flex gap-2 flex-1">
-                {mockQuestion.tags.map((tag) => (
+
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+              <div className="flex flex-wrap gap-2">
+                {question.tags.map((tag) => (
                   <Badge key={tag} variant="secondary">
                     {tag}
                   </Badge>
@@ -147,73 +162,70 @@ export default function QuestionDetailPage() {
 
               <div className="text-sm text-muted-foreground">
                 <span>
-                  Answered by{" "}
-                  <span className="font-medium">
-                    {mockQuestion.author.name}
+                  Posted by{" "}
+                  <span className="font-medium text-foreground">
+                    {question.author.name}
                   </span>{" "}
-                  • {mockQuestion.author.reputation} rep
+                  • {question.author.reputation} rep
                 </span>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <CommentBlock
-          comments={mockQuestion.comments}
-          targetId={mockQuestion.id}
-          isCollapsible={false}
-        />
-      </section>
       <Separator />
-      {/*  Answers Section */}
-      <section className="space-y-8">
-        <h2 className="text-xl font-semibold">
-          {mockQuestion.answers.length}{" "}
-          {mockQuestion.answers.length === 1 ? "Answer" : "Answers"}
-        </h2>
 
-        {mockQuestion.answers.map((ans) => (
-          <div key={nanoid()} className="space-y-3 border-b pb-4">
-            <div className="flex flex-col sm:flex-row gap-6">
-              {/* Votes */}
-              <div className="flex sm:flex-col items-center gap-2 sm:gap-0">
-                <Button size="icon" variant="ghost">
-                  <ArrowBigUp className="h-5 w-5" />
-                </Button>
-                <span className="font-semibold">{ans.votes}</span>
-                <Button size="icon" variant="ghost">
-                  <ArrowBigDown className="h-5 w-5" />
-                </Button>
+      {/* ANSWER SECTION */}
+      {answerError ? (
+        <Alert variant="destructive">
+          <AlertCircleIcon className="h-4 w-4" />
+          <AlertDescription>{answerError}</AlertDescription>
+        </Alert>
+      ) : answers.length > 0 ? (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold">
+            {answers.length} {answers.length > 1 ? "Answers" : "Answer"}
+          </h2>
+
+          {answers.map((ans) => (
+            <div
+              key={ans.$id}
+              className="flex flex-col sm:flex-row gap-6 rounded-lg border p-4 bg-card shadow-sm"
+            >
+              <div className="sm:w-16 flex sm:flex-col items-center gap-2">
+                <Vote targetId={ans.$id} votes={ans.votes} />
               </div>
 
-              {/* Body */}
               <div className="flex-1 space-y-3">
-                <div className="prose max-w-none">
-                  <MDEditor.Markdown source={ans.body} />
-                </div>
-
+                <MDEditor.Markdown
+                  source={ans.body}
+                  className="[&_code]:bg-muted-foreground/10 prose"
+                />
                 <div className="text-sm text-muted-foreground">
                   <span>
                     Answered by{" "}
-                    <span className="font-medium">{ans.author.name}</span> •{" "}
-                    {ans.author.reputation} rep
+                    <span className="font-medium text-foreground">
+                      {ans.author.name}
+                    </span>{" "}
+                    • {ans.author.reputation} rep
                   </span>
                 </div>
-                <CommentBlock
-                  comments={ans.comments}
-                  targetId={ans.id}
-                  isCollapsible={true}
-                />
               </div>
             </div>
-          </div>
-        ))}
-      </section>
-      {/*  Answer Form */}
-      <section className="space-y-3">
-        <h3 className="text-lg font-semibold">Your Answer</h3>
-        <AnswerForm />
-      </section>
+          ))}
+        </div>
+      ) : (
+        <p className="text-muted-foreground italic">
+          No answers yet. Be the first to answer!
+        </p>
+      )}
+
+      {/* ANSWER FORM */}
+      <div className="pt-6 border-t">
+        <h3 className="text-xl font-semibold mb-3">Your Answer</h3>
+        <AnswerForm targetId={question.$id} reFetch={fetchAnswers} />
+      </div>
     </div>
   );
 }

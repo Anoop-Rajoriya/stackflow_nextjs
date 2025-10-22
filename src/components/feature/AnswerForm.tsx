@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AnswerSchema, AnswerValues } from "@/lib/FormsSchema";
@@ -11,12 +13,20 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
 import { AlertCircleIcon, CheckIcon } from "lucide-react";
 import { Spinner } from "../ui/spinner";
 import { Alert, AlertDescription } from "../ui/alert";
+import api from "@/lib/axios";
+import useStore from "@/store";
+import MDEditor from "@uiw/react-md-editor";
 
-function AnswerForm() {
+type Props = {
+  targetId: string;
+  className?: string;
+  reFetch?: () => Promise<void>;
+};
+
+function AnswerForm({ targetId, reFetch }: Props) {
   const [state, setState] = useState<"initial" | "loading" | "success">(
     "initial"
   );
@@ -27,7 +37,32 @@ function AnswerForm() {
       body: "",
     },
   });
-  async function onComment(values: AnswerValues) {}
+  const { getValidJWT } = useStore();
+
+  async function onAnswer(values: AnswerValues) {
+    try {
+      setState("loading");
+      setError(null);
+      const token = await getValidJWT();
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      await api.post(
+        `/questions/${targetId}/answers`,
+        { ...values },
+        { headers }
+      );
+      setState("success");
+      reFetch?.();
+    } catch (error) {
+      setState("initial");
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something want wrong, while answering"
+      );
+    }
+  }
   return (
     <Form {...form}>
       {error && (
@@ -37,7 +72,7 @@ function AnswerForm() {
         </Alert>
       )}
       <form
-        onSubmit={form.handleSubmit(onComment)}
+        onSubmit={form.handleSubmit(onAnswer)}
         onReset={() => form.reset()}
         className="space-y-2"
       >
@@ -47,10 +82,13 @@ function AnswerForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Textarea
-                  placeholder="Write your answer in Markdown..."
+                <MDEditor
+                  value={field.value}
+                  onChange={field.onChange}
                   className="min-h-[150px]"
-                  {...field}
+                  textareaProps={{
+                    placeholder: "Write your answer in Markdown...",
+                  }}
                 />
               </FormControl>
               <FormMessage />

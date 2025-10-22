@@ -93,24 +93,21 @@ export default function QuestionCard({
           {tags.length && (
             <div className="flex items-center flex-wrap gap-2">
               {tags.map((tag) => (
-                <Badge key={Math.random() * 100000} variant={"secondary"}>
+                <Badge className="min-w-12" key={Math.random() * 100000} variant={"secondary"}>
                   {tag}
                 </Badge>
               ))}
             </div>
           )}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="size-9">
+            <div className="flex items-center gap-1">
+              <Avatar className="size-6">
                 <AvatarImage src={author.avatarUrl} />
-                <AvatarFallback>{author.name.slice(0, 2)}</AvatarFallback>
+                <AvatarFallback className="text-sm">{author.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
-              <div className="text-xs flex flex-col items-start">
-                <span className="font-medium">{author.name}</span>
-                <span className="text-muted-foreground">
-                  {author.reputation}
-                </span>
-              </div>
+              <span className="text-sm text-muted-foreground">
+                {author.name} - {author.reputation}
+              </span>
             </div>
             <div className="text-xs flex text-muted-foreground gap-2">
               <div className="flex">

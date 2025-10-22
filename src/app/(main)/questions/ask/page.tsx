@@ -21,8 +21,6 @@ function AskQuestion() {
     const res = await api.post("/questions", value, {
       headers,
     });
-
-    console.log(res);
   }
 
   async function onEdit(value: AskQuestionValues) {}
