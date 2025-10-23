@@ -2,35 +2,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ID, Permission, Query, Role } from "node-appwrite";
 import { DB, PROFILE, QUESTION } from "@/appwrite/names";
-import { tablesdb, verifyAppwriteJwt } from "@/appwrite/server.config";
+import { tablesdb, verifyUser } from "@/appwrite/server.config";
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Auth
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json(
-        { error: "Missing or malformed auth token" },
-        { status: 401 }
-      );
-    }
-
-    const jwt = authHeader.replace("Bearer ", "").trim();
-    const user = await verifyAppwriteJwt(jwt);
-    if (!user) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
-
-    // 2. Input validation
     const { title, body, tags } = await req.json();
-    if (!title || !body) {
+    const authHeader = req.headers.get("authorization");
+
+    // --- Validate input ---
+    if (!title || !body || !Array.isArray(tags) || tags.length === 0) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // 3. Get user profile
+    // --- Verify user ---
+    const user = await verifyUser(authHeader);
+
+    // --- Get author profile ---
     const profileRes = await tablesdb.listRows({
       databaseId: DB,
       tableId: PROFILE,
@@ -44,31 +34,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const authorId = profileRes.rows[0].$id;
+    const author = {
+      id: profileRes.rows[0].$id,
+      userId: user.$id,
+    };
 
-    // 4. Create question
-    const questionData = { title, body, tags, author: authorId };
-    const rowId = ID.unique();
+    // --- Create question row ---
     const questionRes = await tablesdb.createRow({
       databaseId: DB,
       tableId: QUESTION,
-      rowId,
-      data: questionData,
+      rowId: ID.unique(),
+      data: { title, body, tags, author: author.id },
       permissions: [
-        Permission.delete(Role.user(user.$id)),
-        Permission.update(Role.user(user.$id)),
+        Permission.delete(Role.user(author.userId)),
+        Permission.update(Role.user(author.userId)),
       ],
     });
 
-    return NextResponse.json({
-      message: "Question created successfully",
-      questionId: questionRes.$id,
-    });
+    return NextResponse.json({ question: questionRes }, { status: 201 });
   } catch (error) {
     console.error("[POST /questions] error:", error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: error instanceof Error ? error.message : "Internal Server Error",
       },
       { status: 500 }
     );
