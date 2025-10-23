@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import api from "@/lib/axios";
-import QuestionCard from "@/components/feature/QuestionCard";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
+import { AlertCircleIcon } from "lucide-react";
+import QuestionCard from "@/components/feature/QuestionCard";
 
 type Question = {
   $id: string;
@@ -22,72 +24,76 @@ type Question = {
 };
 
 function Questions() {
-  const [questions, setQuestions] = useState<Question[] | null>(null);
-  const [state, setState] = useState<{
-    error: string | null;
-    loading: boolean;
-  }>({
-    error: null,
-    loading: false,
-  });
+  const [questionList, setQuestionsList] = useState<Question[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const fetchQuestions = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.get("/question");
+      const queList = res.data.questions;
+      if (Array.isArray(queList) && queList.length > 0) {
+        setQuestionsList(queList);
+      } else {
+        setQuestionsList([]);
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong, please refresh the page."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      setState({ error: null, loading: true });
-      try {
-        const res = await api.get("/questions");
-        const questionList = res.data.questions;
-        if (Array.isArray(questionList) && questionList.length > 0) {
-          setQuestions(questionList);
-        } else {
-          setQuestions(null);
-        }
-
-        setState({ error: null, loading: false });
-      } catch (err) {
-        setState({
-          error:
-            err instanceof Error
-              ? err.message
-              : "Something went wrong, please refresh the page.",
-          loading: false,
-        });
-      }
-    };
-
     fetchQuestions();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner className="size-8" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1">
+        <Alert variant={"destructive"}>
+          <AlertCircleIcon />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  if (questionList.length) {
+    return questionList.map((que) => (
+      <QuestionCard
+        key={que.$id}
+        id={que.$id}
+        title={que.title}
+        body={que.body}
+        tags={que.tags}
+        votes={que.votes}
+        answers={que.answers}
+        views={que.views}
+        comments={que.comments}
+        author={que.author}
+        createdAt={que.$createdAt}
+      />
+    ));
+  }
+
   return (
-    <div className="space-y-4 flex flex-col items-start flex-1 px-2 md:px-0">
-      {state.loading ? (
-        <div className="flex-1 flex items-center justify-center w-full py-10">
-          <Spinner className="size-8" />
-        </div>
-      ) : state.error ? (
-        <p className="text-red-500 text-center w-full py-4">{state.error}</p>
-      ) : questions?.length ? (
-        questions.map((q) => (
-          <QuestionCard
-            key={q.$id}
-            id={q.$id}
-            title={q.title}
-            body={q.body}
-            tags={q.tags}
-            votes={q.votes}
-            answers={q.answers}
-            views={q.views}
-            comments={q.comments}
-            author={q.author}
-            createdAt={q.$createdAt}
-          />
-        ))
-      ) : (
-        <p className="text-muted-foreground text-center w-full p-4">
-          No Questions Found
-        </p>
-      )}
-    </div>
+    <p className=" flex-1 text-muted-foreground text-center p-4">
+      No Questions Found
+    </p>
   );
 }
 

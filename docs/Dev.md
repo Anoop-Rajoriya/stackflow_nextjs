@@ -85,3 +85,9 @@
 
 - Add asking quesiton
 - Add answring
+
+## 2025-10-23 - Q/A System
+
+## completed
+
+- Complete Questioning and answering refactor code

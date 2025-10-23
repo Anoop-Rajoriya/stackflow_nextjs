@@ -7,23 +7,23 @@ import AskQuestionForm from "@/components/feature/AskQuestionForm";
 import { UserOnlyRoute } from "@/components/shared/RouteProvider";
 import { AskQuestionValues } from "@/lib/FormsSchema";
 import useStore from "@/store";
+import { toast } from "react-toastify";
 
 function AskQuestion() {
-  const params = useSearchParams();
-  const slug = params.get("slug");
   const { getValidJWT } = useStore();
+  const slug = useSearchParams().get("slug");
 
-  async function onCreate(value: AskQuestionValues) {
+  const onCreate = async (value: AskQuestionValues) => {
     const token = await getValidJWT();
     const headers = {
       Authorization: `Bearer ${token}`,
     };
-    const res = await api.post("/questions", value, {
+    const res = await api.post("/question", value, {
       headers,
     });
-  }
+  };
+  const onEdit = async (value: AskQuestionValues) => {};
 
-  async function onEdit(value: AskQuestionValues) {}
   return (
     <div className="flex-1 overflow-auto py-2">
       {slug ? (

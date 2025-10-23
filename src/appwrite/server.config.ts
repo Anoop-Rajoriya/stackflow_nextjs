@@ -38,3 +38,26 @@ export async function verifyAppwriteJwt(
 
   return user;
 }
+
+export async function verifyUser(
+  authHeader: string | null
+): Promise<Models.User<Models.Preferences>> {
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new Error("Missing or malformed auth token");
+  }
+
+  const jwt = authHeader.replace("Bearer ", "").trim();
+  const client = new Client()
+    .setEndpoint(appwrite.endpoint)
+    .setProject(appwrite.projectId)
+    .setJWT(jwt); // Set the user's session token
+
+  const account = new Account(client);
+  const user = await account.get();
+
+  if (!user) {
+    throw new Error("Invalid token");
+  }
+
+  return user;
+}

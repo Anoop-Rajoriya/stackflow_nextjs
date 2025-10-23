@@ -9,7 +9,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Button } from "../ui/button";
@@ -48,7 +47,7 @@ function AnswerForm({ targetId, reFetch }: Props) {
         Authorization: `Bearer ${token}`,
       };
       await api.post(
-        `/questions/${targetId}/answers`,
+        `/question/${targetId}/answer`,
         { ...values },
         { headers }
       );
@@ -66,7 +65,7 @@ function AnswerForm({ targetId, reFetch }: Props) {
   return (
     <Form {...form}>
       {error && (
-        <Alert>
+        <Alert variant={"destructive"}>
           <AlertCircleIcon />
           <AlertDescription>{error}</AlertDescription>
         </Alert>

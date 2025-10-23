@@ -12,6 +12,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Vote from "@/components/feature/Vote";
 import api from "@/lib/axios";
 import CommentBlock from "@/components/feature/Comment";
+import useStore from "@/store";
+import { Button } from "@/components/ui/button";
 
 type Author = {
   $id: string;
@@ -50,40 +52,29 @@ function formatDate(d: string | Date) {
   });
 }
 
+type QueDetailState = {
+  question: Question;
+  answerList: Answer[];
+};
+
 export default function QuestionDetailPage() {
   const { slug } = useParams();
-
-  const [question, setQuestion] = useState<Question | null>(null);
-  const [answers, setAnswers] = useState<Answer[]>([]);
+  const { profile } = useStore();
+  const [queDetail, setQueDetail] = useState<QueDetailState | null>(null);
   const [loading, setLoading] = useState(true);
-  const [questionError, setQuestionError] = useState<string | null>(null);
-  const [answerError, setAnswerError] = useState<string | null>(null);
-
+  const [error, setError] = useState<string | null>(null);
   const fetchQuestion = async () => {
     setLoading(true);
-    setQuestionError(null);
+    setError(null);
     try {
-      const qRes = await api.get(`/questions/${slug}`);
-      setQuestion(qRes.data.question);
-    } catch (err) {
-      console.error("Question fetch error:", err);
-      setQuestionError(
-        err instanceof Error ? err.message : "Failed to load question"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-  const fetchAnswers = async () => {
-    setLoading(true);
-    setAnswerError(null);
-    try {
-      const aRes = await api.get(`/questions/${slug}/answers`);
-      setAnswers(aRes.data.answers);
-    } catch (err) {
-      console.error("Question fetch error:", err);
-      setQuestionError(
-        err instanceof Error ? err.message : "Failed to load question"
+      const res = await api.get(`/question/${slug}`);
+      setQueDetail({
+        question: res.data.question,
+        answerList: res.data.answers,
+      });
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Failed to load question"
       );
     } finally {
       setLoading(false);
@@ -92,68 +83,62 @@ export default function QuestionDetailPage() {
 
   useEffect(() => {
     fetchQuestion();
-    fetchAnswers();
-  }, [slug]);
+  }, []);
 
-  // Loading
   if (loading) {
     return (
-      <div className="flex-1 flex justify-center items-center py-16">
-        <Spinner className="size-10" />
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner className="size-8" />
       </div>
     );
   }
 
-  // Error
-  if (questionError) {
+  if (error) {
     return (
-      <div className=" flex-1 px-4 py-10">
-        <Alert variant="destructive">
-          <AlertCircleIcon className="h-4 w-4" />
-          <AlertDescription>{questionError}</AlertDescription>
+      <div className="flex-1 flex items-start justify-center">
+        <Alert variant={"destructive"}>
+          <AlertCircleIcon />
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       </div>
     );
   }
 
-  // Not Found
-  if (!question) {
-    return (
-      <div className="flex-1 text-center text-muted-foreground py-16">
-        Question not found.
-      </div>
-    );
+  if (!queDetail) {
+    return null;
   }
 
   return (
-    <div className="flex-1 space-y-8 px-4 py-6">
-      {/* QUESTION BLOCK */}
-      <div className="space-y-4">
+    <div className="flex-1 space-y-6 max-w-4xl w-full mx-auto px-2 md:px-4">
+      {/* Question Block */}
+      <section className="space-y-4">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold leading-tight">{question.title}</h1>
+          <h1 className="text-3xl font-bold leading-tight">
+            {queDetail.question.title}
+          </h1>
           <div className="text-sm text-muted-foreground flex flex-wrap gap-3">
-            <p>Asked: {formatDate(question.$createdAt)}</p>
-            <p>Updated: {formatDate(question.$updatedAt)}</p>
-            <p>Views: {question.views}</p>
+            <p>Asked: {formatDate(queDetail.question.$createdAt)}</p>
+            <p>Updated: {formatDate(queDetail.question.$updatedAt)}</p>
+            <p>Views: {queDetail.question.views}</p>
           </div>
         </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="sm:w-16 flex sm:flex-col items-center gap-2">
-            <Vote targetId={question.$id} votes={question.votes} />
+            <Vote
+              targetId={queDetail.question.$id}
+              votes={queDetail.question.votes}
+            />
           </div>
 
           <div className="flex-1 space-y-4">
-            <div className="rounded-md border p-4 bg-card">
-              <MDEditor.Markdown
-                source={question.body}
-                className="[&_code]:bg-muted-foreground/10 prose"
-              />
-            </div>
+            <MDEditor.Markdown
+              source={queDetail.question.body}
+              className="[&_code]:bg-muted-foreground/10 prose p-2 px-4 rounded-md"
+            />
 
             <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
               <div className="flex flex-wrap gap-2">
-                {question.tags.map((tag) => (
+                {queDetail.question.tags.map((tag) => (
                   <Badge key={tag} variant="secondary">
                     {tag}
                   </Badge>
@@ -164,68 +149,66 @@ export default function QuestionDetailPage() {
                 <span>
                   Posted by{" "}
                   <span className="font-medium text-foreground">
-                    {question.author.name}
+                    {queDetail.question.author.name}
                   </span>{" "}
-                  • {question.author.reputation} rep
+                  • {queDetail.question.author.reputation} rep
                 </span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
+      </section>
       <Separator />
+      {/* Answer Block */}
+      <section className="space-y-4">
+        {queDetail.answerList.length ? (
+          <>
+            <h2 className="text-2xl font-semibold">
+              {queDetail.answerList.length}{" "}
+              {queDetail.answerList.length > 1 ? "Answers" : "Answer"}
+            </h2>
+            {queDetail.answerList.map((ans) => (
+              <div
+                key={ans.$id}
+                className="flex flex-col sm:flex-row gap-2 rounded-lg border p-4 bg-card shadow-sm"
+              >
+                <div className="sm:w-16 flex sm:flex-col items-center gap-2">
+                  <Vote targetId={ans.$id} votes={ans.votes} />
+                </div>
 
-      {/* ANSWER SECTION */}
-      {answerError ? (
-        <Alert variant="destructive">
-          <AlertCircleIcon className="h-4 w-4" />
-          <AlertDescription>{answerError}</AlertDescription>
-        </Alert>
-      ) : answers.length > 0 ? (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold">
-            {answers.length} {answers.length > 1 ? "Answers" : "Answer"}
-          </h2>
-
-          {answers.map((ans) => (
-            <div
-              key={ans.$id}
-              className="flex flex-col sm:flex-row gap-6 rounded-lg border p-4 bg-card shadow-sm"
-            >
-              <div className="sm:w-16 flex sm:flex-col items-center gap-2">
-                <Vote targetId={ans.$id} votes={ans.votes} />
-              </div>
-
-              <div className="flex-1 space-y-3">
-                <MDEditor.Markdown
-                  source={ans.body}
-                  className="[&_code]:bg-muted-foreground/10 prose"
-                />
-                <div className="text-sm text-muted-foreground">
-                  <span>
-                    Answered by{" "}
-                    <span className="font-medium text-foreground">
-                      {ans.author.name}
-                    </span>{" "}
-                    • {ans.author.reputation} rep
-                  </span>
+                <div className="flex-1 space-y-3">
+                  <MDEditor.Markdown
+                    source={ans.body}
+                    className="[&_code]:bg-muted-foreground/10 prose p-2 px-4 "
+                  />
+                  <div className="text-sm text-muted-foreground">
+                    <span>
+                      Answered by{" "}
+                      <span className="font-medium text-foreground">
+                        {ans.author.name}
+                      </span>{" "}
+                      • {ans.author.reputation} rep
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-muted-foreground italic">
-          No answers yet. Be the first to answer!
-        </p>
-      )}
-
-      {/* ANSWER FORM */}
-      <div className="pt-6 border-t">
-        <h3 className="text-xl font-semibold mb-3">Your Answer</h3>
-        <AnswerForm targetId={question.$id} reFetch={fetchAnswers} />
-      </div>
+            ))}
+          </>
+        ) : (
+          <p className="text-muted-foreground italic">
+            No answers yet. Be the first to answer!
+          </p>
+        )}
+      </section>
+      {/* {profile && profile.id !== queDetail.question.author.$id && ( */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold">Post Your Answer</h2>
+          <AnswerForm
+            targetId={queDetail.question.$id}
+            reFetch={fetchQuestion}
+          />
+        </section>
+      {/* )} */}
     </div>
   );
 }
