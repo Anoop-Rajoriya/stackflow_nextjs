@@ -105,7 +105,7 @@ export default function QuestionDetailPage() {
   }
 
   if (!queDetail) {
-    return null;
+    return <div className="flex-1">Data not found</div>;
   }
 
   return (
@@ -157,6 +157,11 @@ export default function QuestionDetailPage() {
             </div>
           </div>
         </div>
+        <CommentBlock
+          targetId={queDetail.question.$id}
+          targetType="question"
+          isCollapsible={false}
+        />
       </section>
       <Separator />
       {/* Answer Block */}
@@ -168,29 +173,33 @@ export default function QuestionDetailPage() {
               {queDetail.answerList.length > 1 ? "Answers" : "Answer"}
             </h2>
             {queDetail.answerList.map((ans) => (
-              <div
-                key={ans.$id}
-                className="flex flex-col sm:flex-row gap-2 rounded-lg border p-4 bg-card shadow-sm"
-              >
-                <div className="sm:w-16 flex sm:flex-col items-center gap-2">
-                  <Vote targetId={ans.$id} votes={ans.votes} />
-                </div>
+              <div key={ans.$id} className="space-y-2">
+                <div className="flex flex-col sm:flex-row gap-2 rounded-lg border p-4 bg-card shadow-sm">
+                  <div className="sm:w-16 flex sm:flex-col items-center gap-2">
+                    <Vote targetId={ans.$id} votes={ans.votes} />
+                  </div>
 
-                <div className="flex-1 space-y-3">
-                  <MDEditor.Markdown
-                    source={ans.body}
-                    className="[&_code]:bg-muted-foreground/10 prose p-2 px-4 "
-                  />
-                  <div className="text-sm text-muted-foreground">
-                    <span>
-                      Answered by{" "}
-                      <span className="font-medium text-foreground">
-                        {ans.author.name}
-                      </span>{" "}
-                      • {ans.author.reputation} rep
-                    </span>
+                  <div className="flex-1 space-y-3">
+                    <MDEditor.Markdown
+                      source={ans.body}
+                      className="[&_code]:bg-muted-foreground/10 prose p-2 px-4 "
+                    />
+                    <div className="text-sm text-muted-foreground">
+                      <span>
+                        Answered by{" "}
+                        <span className="font-medium text-foreground">
+                          {ans.author.name}
+                        </span>{" "}
+                        • {ans.author.reputation} rep
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <CommentBlock
+                  targetId={ans.$id}
+                  targetType="answer"
+                  isCollapsible={true}
+                />
               </div>
             ))}
           </>
@@ -200,7 +209,7 @@ export default function QuestionDetailPage() {
           </p>
         )}
       </section>
-      {/* {profile && profile.id !== queDetail.question.author.$id && ( */}
+      {profile && profile.id !== queDetail.question.author.$id && (
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Post Your Answer</h2>
           <AnswerForm
@@ -208,7 +217,7 @@ export default function QuestionDetailPage() {
             reFetch={fetchQuestion}
           />
         </section>
-      {/* )} */}
+      )}
     </div>
   );
 }

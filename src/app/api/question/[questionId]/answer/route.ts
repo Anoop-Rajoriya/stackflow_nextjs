@@ -42,7 +42,7 @@ export const POST = async (req: NextRequest, { params }: Params) => {
       rowId: questionId,
     });
     // 2. Prevent Own Answering
-    if (queRow.author.$id.toString() === profileRow.$id.toString()) {
+    if (String(queRow.author.$id) === String(profileRow.$id)) {
       return NextResponse.json(
         { error: "Not answer own question" },
         { status: 401 }

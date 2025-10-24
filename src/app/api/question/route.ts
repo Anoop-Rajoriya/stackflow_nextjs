@@ -34,6 +34,7 @@ export const GET = async (req: NextRequest) => {
     );
   }
 };
+
 export const POST = async (req: NextRequest) => {
   try {
     const { title, body, tags } = await req.json();

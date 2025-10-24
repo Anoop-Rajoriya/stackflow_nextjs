@@ -31,10 +31,17 @@ import {
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { Alert, AlertDescription } from "../ui/alert";
+import useStore from "@/store";
+
+type Author = {
+  $id: string;
+  name: string;
+  reputation: number;
+};
 
 type Comment = {
   $id: string;
-  author: string;
+  author: Author;
   body: string;
   $createdAt: string;
 };
@@ -61,16 +68,9 @@ function CommentBlock({
     setError(null);
     try {
       const res = await api.get(
-        targetType === "question"
-          ? `/questions/${targetId}/comments`
-          : `/answers/${targetId}/comments`
+        `/comment?targetId=${targetId}&targetType=${targetType}`
       );
-      // sort by date (newest first)
-      const sorted = (res.data.comments || []).sort(
-        (a: Comment, b: Comment) =>
-          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-      );
-      setComments(sorted);
+      setComments(res.data.comments);
     } catch (err) {
       console.error("Error fetching comments:", err);
       setError("Failed to load comments");
@@ -152,19 +152,25 @@ function CommentForm({
     resolver: zodResolver(CommentSchema),
     defaultValues: { body: "" },
   });
+  const { getValidJWT } = useStore();
 
   async function onComment(values: CommentValues) {
     setState("loading");
     setError(null);
 
     try {
-      const res = await api.post(
-        targetType === "question"
-          ? `/questions/${targetId}/comments`
-          : `/answers/${targetId}/comments`,
+      const token = await getValidJWT();
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      await api.post(
+        `/comment`,
         {
           body: values.body,
-        }
+          targetId,
+          targetType,
+        },
+        { headers }
       );
       reFetch?.();
       form.reset();
@@ -245,7 +251,10 @@ function CommentList({ className, comments }: CommentListProps) {
           key={comment.$id || nanoid()}
           className="text-sm border-b border-border/40 pb-1 text-muted-foreground"
         >
-          <span className="font-medium text-foreground">{comment.author}:</span>{" "}
+          <span className="font-medium text-foreground">
+            {comment.author.name}:
+          </span>
+          {" -> "}
           {comment.body}
         </div>
       ))}
