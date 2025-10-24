@@ -21,7 +21,7 @@ type QuestionCardProps = {
   tags: string[];
   votes: number;
   answers: number;
-  views: number;
+  views: string[];
   comments?: number;
   createdAt: string | Date;
   author: { name: string; reputation?: number; avatarUrl?: string };
@@ -78,7 +78,7 @@ export default function QuestionCard({
           </Badge>
           <Badge variant={"outline"} className="px-2 py-1">
             <EyeIcon className="mr-1 h-4 w-4" />
-            <span className="text-sm">{views}</span>
+            <span className="text-sm">{views.length}</span>
           </Badge>
         </div>
         {/* Content */}
@@ -93,7 +93,11 @@ export default function QuestionCard({
           {tags.length && (
             <div className="flex items-center flex-wrap gap-2">
               {tags.map((tag) => (
-                <Badge className="min-w-12" key={Math.random() * 100000} variant={"secondary"}>
+                <Badge
+                  className="min-w-12"
+                  key={Math.random() * 100000}
+                  variant={"secondary"}
+                >
                   {tag}
                 </Badge>
               ))}
@@ -103,7 +107,9 @@ export default function QuestionCard({
             <div className="flex items-center gap-1">
               <Avatar className="size-6">
                 <AvatarImage src={author.avatarUrl} />
-                <AvatarFallback className="text-sm">{author.name.slice(0, 2)}</AvatarFallback>
+                <AvatarFallback className="text-sm">
+                  {author.name.slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
               <span className="text-sm text-muted-foreground">
                 {author.name} - {author.reputation}

@@ -37,7 +37,7 @@ type Question = {
   body: string;
   tags: string[];
   votes: number;
-  views: number;
+  views: string[];
   author: Author;
   $createdAt: string;
   $updatedAt: string;
@@ -68,11 +68,13 @@ export default function QuestionDetailPage() {
     setError(null);
     try {
       const res = await api.get(`/question/${slug}`);
+      console.log(res);
       setQueDetail({
         question: res.data.question,
         answerList: res.data.answers,
       });
     } catch (error) {
+      console.log("[questions/slug] error: ", error);
       setError(
         error instanceof Error ? error.message : "Failed to load question"
       );
@@ -119,7 +121,7 @@ export default function QuestionDetailPage() {
           <div className="text-sm text-muted-foreground flex flex-wrap gap-3">
             <p>Asked: {formatDate(queDetail.question.$createdAt)}</p>
             <p>Updated: {formatDate(queDetail.question.$updatedAt)}</p>
-            <p>Views: {queDetail.question.views}</p>
+            <p>Views: {queDetail.question.views.length}</p>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">

@@ -14,7 +14,7 @@ type Question = {
   tags: string[];
   votes: number;
   answers: number;
-  views: number;
+  views: string[];
   comments: number;
   author: {
     name: string;

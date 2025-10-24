@@ -75,12 +75,12 @@ export default async function createQuestion() {
     }),
 
     // views
-    tablesdb.createIntegerColumn({
+    tablesdb.createDatetimeColumn({
       databaseId: DB,
       tableId: QUESTION,
       key: "views",
       required: false,
-      xdefault: 0,
+      array: true,
     }),
 
     // votes

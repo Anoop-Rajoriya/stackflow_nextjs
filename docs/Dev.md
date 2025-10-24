@@ -91,3 +91,9 @@
 ## completed
 
 - Complete Questioning and answering refactor code
+
+## 2025-10-24 - Comment System
+
+## completed
+
+- Complete commenting on questions and answers

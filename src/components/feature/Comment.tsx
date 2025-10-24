@@ -62,6 +62,7 @@ function CommentBlock({
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { profile } = useStore();
 
   const fetchComments = async () => {
     setLoading(true);
@@ -97,11 +98,13 @@ function CommentBlock({
       ) : (
         <>
           <CommentList comments={comments} />
-          <CommentForm
-            targetId={targetId}
-            targetType={targetType}
-            reFetch={fetchComments}
-          />
+          {profile && (
+            <CommentForm
+              targetId={targetId}
+              targetType={targetType}
+              reFetch={fetchComments}
+            />
+          )}
         </>
       )}
     </div>
