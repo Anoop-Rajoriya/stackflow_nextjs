@@ -236,7 +236,7 @@ For mutations, call \`queryClient.invalidateQueries(['todos'])\` after updating 
         comments: [
           {
             id: "c13",
-            author: users[2],   
+            author: users[2],
             body: "True! The DevTools make debugging data fetching flow very transparent, especially during refetch cycles.",
           },
         ],

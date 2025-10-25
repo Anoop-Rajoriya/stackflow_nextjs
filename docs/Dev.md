@@ -97,3 +97,10 @@
 ## completed
 
 - Complete commenting on questions and answers
+
+## 2025-10-25 - Voting & Reputation System
+
+## completed
+
+- Complete voting feature on question and answers
+- Add Reputation system each upvote on quesiton +5 and answer +10 and downvote on both quesiton and answer -2 reputation earn

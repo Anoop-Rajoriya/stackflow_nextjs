@@ -72,7 +72,17 @@ export const POST = async (req: NextRequest) => {
         Permission.update(Role.user(user.$id)),
       ],
     });
-    // 4. Return Response
+
+    // 4. Upvote Reputation
+    await tablesdb.updateRow({
+      databaseId: DB,
+      tableId: PROFILE,
+      rowId: profileRow.$id,
+      data: {
+        reputation: (profileRow.reputation ?? 0) + 1,
+      },
+    });
+    // 5. Return Response
     return NextResponse.json({ createdQuestion: questionRow });
   } catch (error) {
     console.error("[POST /question] error:", error);

@@ -35,7 +35,6 @@ export const GET = async (req: NextRequest) => {
       (v) => v.voteType === "downVote"
     ).length;
     const totalVotes = upVotes - downVotes;
-
     // 4. Return computed results
     return NextResponse.json({
       upVotes,
@@ -57,7 +56,8 @@ export const POST = async (req: NextRequest) => {
   try {
     const { voteType, targetId, targetType } = await req.json();
     const authHeader = req.headers.get("authorization");
-    // 1. Authenticate User
+
+    // 1️⃣ Authenticate user
     const user = await verifyUser(authHeader);
     const profileRows = await tablesdb.listRows({
       databaseId: DB,
@@ -65,29 +65,37 @@ export const POST = async (req: NextRequest) => {
       queries: [Query.equal("userId", user.$id)],
     });
     const profileRow = profileRows.rows[0];
-    if (!profileRow) {
+    if (!profileRow)
       return NextResponse.json(
         { error: "User profile not found" },
         { status: 404 }
       );
-    }
-    // 2. Get Target
+
+    // 2️⃣ Fetch target
     const targetTable = targetType === "question" ? QUESTION : ANSWER;
     const targetRow = await tablesdb.getRow({
       databaseId: DB,
       tableId: targetTable,
       rowId: targetId,
     });
-    if (!targetRow) {
+    if (!targetRow)
       return NextResponse.json({ error: "Target not found" }, { status: 404 });
-    }
-    if (String(targetRow.author.$id) === String(profileRow.$id)) {
+
+    if (String(targetRow.author.$id) === String(profileRow.$id))
       return NextResponse.json(
         { error: `You cannot vote your own ${targetType}` },
         { status: 401 }
       );
-    }
-    // 3. Check Existing Vote
+
+    // 3️⃣ Fetch target author's profile
+    const authorProfileId = targetRow.author;
+    const authorProfile = await tablesdb.getRow({
+      databaseId: DB,
+      tableId: PROFILE,
+      rowId: authorProfileId,
+    });
+
+    // 4️⃣ Check existing vote
     const existingVotes = await tablesdb.listRows({
       databaseId: DB,
       tableId: VOTE,
@@ -96,12 +104,21 @@ export const POST = async (req: NextRequest) => {
         Query.equal("targetId", targetId),
       ],
     });
+
     const prevVote = existingVotes.rows[0];
     let newVoteType = voteType;
     let voteChange = 0;
-    // 4. Create Vote
+    let reputationChange = 0;
+
+    // helper function for rep value
+    const getRepValue = (type: "upVote" | "downVote", isQuestion: boolean) => {
+      if (type === "upVote") return isQuestion ? 5 : 10;
+      return -2;
+    };
+
+    // 5️⃣ Voting logic
     if (!prevVote) {
-      // no previous vote → create new
+      // → No previous vote, create new one
       await tablesdb.createRow({
         databaseId: DB,
         tableId: VOTE,
@@ -113,27 +130,33 @@ export const POST = async (req: NextRequest) => {
         },
       });
       voteChange = voteType === "upVote" ? 1 : -1;
+      reputationChange = getRepValue(voteType, targetType === "question");
     } else if (prevVote.voteType === voteType) {
-      // same vote again → remove
+      // → User clicked same vote → remove it
       await tablesdb.deleteRow({
         databaseId: DB,
         tableId: VOTE,
         rowId: prevVote.$id,
       });
-      voteChange = voteType === "upVote" ? -1 : 1; // reverse
+      voteChange = voteType === "upVote" ? -1 : 1;
+      reputationChange = -getRepValue(voteType, targetType === "question");
       newVoteType = null;
     } else {
-      // switch between up and down
+      // → User switched from up ↔ down
       await tablesdb.updateRow({
         databaseId: DB,
         tableId: VOTE,
         rowId: prevVote.$id,
         data: { voteType },
       });
-      voteChange = voteType === "upVote" ? 2 : -2; // switch adds 2 or removes 2
+      voteChange = voteType === "upVote" ? 2 : -2; // net +2 or −2
+      const prevRep = getRepValue(prevVote.voteType, targetType === "question");
+      const newRep = getRepValue(voteType, targetType === "question");
+      reputationChange = newRep - prevRep; // revert + apply new
     }
-    // 5. Update Votes
-    const updated = await tablesdb.updateRow({
+
+    // 6️⃣ Update votes on target
+    const updatedTarget = await tablesdb.updateRow({
       databaseId: DB,
       tableId: targetTable,
       rowId: targetId,
@@ -141,11 +164,23 @@ export const POST = async (req: NextRequest) => {
         votes: (targetRow.votes ?? 0) + voteChange,
       },
     });
-    // 6. Return Response
+
+    // 7️⃣ Update author reputation
+    await tablesdb.updateRow({
+      databaseId: DB,
+      tableId: PROFILE,
+      rowId: authorProfileId,
+      data: {
+        reputation: (authorProfile.reputation ?? 0) + reputationChange,
+      },
+    });
+
+    // 8️⃣ Return response
     return NextResponse.json({
       targetId,
       newVoteType,
-      totalVotes: updated.votes,
+      totalVotes: updatedTarget.votes,
+      reputationChange,
     });
   } catch (error) {
     console.error("[POST /vote] error:", error);
