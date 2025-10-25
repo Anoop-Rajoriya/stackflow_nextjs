@@ -68,7 +68,6 @@ export default function QuestionDetailPage() {
     setError(null);
     try {
       const res = await api.get(`/question/${slug}`);
-      console.log(res);
       setQueDetail({
         question: res.data.question,
         answerList: res.data.answers,
@@ -126,10 +125,7 @@ export default function QuestionDetailPage() {
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="sm:w-16 flex sm:flex-col items-center gap-2">
-            <Vote
-              targetId={queDetail.question.$id}
-              votes={queDetail.question.votes}
-            />
+            <Vote targetId={queDetail.question.$id} targetType="question" />
           </div>
 
           <div className="flex-1 space-y-4">
@@ -178,7 +174,7 @@ export default function QuestionDetailPage() {
               <div key={ans.$id} className="space-y-2">
                 <div className="flex flex-col sm:flex-row gap-2 rounded-lg border p-4 bg-card shadow-sm">
                   <div className="sm:w-16 flex sm:flex-col items-center gap-2">
-                    <Vote targetId={ans.$id} votes={ans.votes} />
+                    <Vote targetId={ans.$id} targetType="answer" />
                   </div>
 
                   <div className="flex-1 space-y-3">

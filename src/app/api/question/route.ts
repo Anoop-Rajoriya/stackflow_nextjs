@@ -22,6 +22,7 @@ export const GET = async (req: NextRequest) => {
       tableId: QUESTION,
       queries: [Query.select(["*", "author.*"]), Query.orderDesc("$createdAt")],
     });
+
     // 2. Return Response
     return NextResponse.json({ questions: queRows.rows });
   } catch (error) {

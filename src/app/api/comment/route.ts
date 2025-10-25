@@ -28,7 +28,7 @@ export const GET = async (req: NextRequest) => {
     // 2. Return Response
     return NextResponse.json({ comments: commentRows.rows });
   } catch (error) {
-    console.error("[POST /comment] error:", error);
+    console.error("[Get /comment] error:", error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Internal server error",

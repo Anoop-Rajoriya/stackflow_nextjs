@@ -4,6 +4,7 @@ import createProfileTable from "./tables/profile";
 import createQuestionTable from "./tables/question";
 import createAnswerTable from "./tables/answer";
 import createCommentTable from "./tables/comment";
+import createVoteTable from "./tables/vote";
 
 /* ---------------- Setup Helpers ---------------- */
 async function ensureDatabase() {
@@ -19,6 +20,7 @@ async function ensureDatabase() {
       createQuestionTable(),
       createAnswerTable(),
       createCommentTable(),
+      createVoteTable(),
     ]);
     console.log(`Database "${DB}" and tables created`);
   }
